@@ -487,7 +487,6 @@
 		<Compile Include="Save\ModSaveData.cs" />
 		<Compile Include="Save\Patches.cs" />
 		<Compile Include="Variables.cs" />
-		<Content Include="Directory.Build.props" />
 	</ItemGroup>
 
 	<ItemGroup>
