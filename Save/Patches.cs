@@ -1,4 +1,4 @@
-﻿using HarmonyLib;
+using HarmonyLib;
 using Il2Cpp;
 using Il2CppPixelCrushers.DialogueSystem;
 using MelonLoader;
@@ -15,6 +15,12 @@ internal static class JsonSaveLoad_SaveDataToFile_Patch
         {
             foreach (string variableName in Variables.RegisteredVariables)
             {
+                if (!DialogueLua.DoesVariableExist(variableName))
+                {
+                    // silently skip if it doesn't exist.
+                    continue;
+                }
+
                 Lua.Result valueLua = DialogueLua.GetVariable(variableName);
                 if (valueLua.IsBool)
                 {
@@ -42,7 +48,7 @@ internal static class JsonSaveLoad_SaveDataToFile_Patch
 
         ModSaveData modSaveData = new()
         {
-            Variables = variables
+            Variables = variables,
         };
         string json = System.Text.Json.JsonSerializer.Serialize(modSaveData);
 

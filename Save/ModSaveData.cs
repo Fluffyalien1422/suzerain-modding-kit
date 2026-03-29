@@ -1,6 +1,9 @@
-﻿namespace SuzerainModdingKit.Save;
+namespace SuzerainModdingKit.Save;
 
-internal class ModSaveData
+internal sealed class ModSaveData
 {
-    public Dictionary<string, object> Variables { get; set; }
+    public Dictionary<string, object> Variables
+    {
+        get; set;
+    }
 }

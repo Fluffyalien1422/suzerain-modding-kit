@@ -1,4 +1,4 @@
-﻿namespace SuzerainModdingKit.Save;
+namespace SuzerainModdingKit.Save;
 
 internal static class ModSaveCleanup
 {

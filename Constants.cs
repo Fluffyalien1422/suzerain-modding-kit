@@ -1,4 +1,4 @@
-﻿namespace SuzerainModdingKit;
+namespace SuzerainModdingKit;
 
 internal static class Constants
 {

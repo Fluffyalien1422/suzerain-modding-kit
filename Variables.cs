@@ -1,4 +1,4 @@
-﻿using Il2CppPixelCrushers.DialogueSystem;
+using Il2CppPixelCrushers.DialogueSystem;
 using MelonLoader;
 
 namespace SuzerainModdingKit;
@@ -9,7 +9,7 @@ public static class Variables
 
     public static void Register(string name)
     {
-        if (RegisteredVariables.Contains(name))
+        if (RegisteredVariables.Contains(name, StringComparer.Ordinal))
         {
             Melon<Core>.Logger.Warning($"The game variable '{name}' has already been registered.");
             return;
@@ -32,6 +32,7 @@ public static class Variables
     {
         return DialogueLua.GetVariable(name).AsFloat;
     }
+
     public static string GetString(string name)
     {
         return DialogueLua.GetVariable(name).AsString;
