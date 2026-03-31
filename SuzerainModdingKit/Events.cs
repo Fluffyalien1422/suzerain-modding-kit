@@ -1,37 +1,23 @@
-using HarmonyLib;
-using Il2Cpp;
-using MelonLoader;
-
 namespace SuzerainModdingKit;
 
-//public static class Events
-//{
-
-//}
-
-[HarmonyPatch(typeof(GameFlowManager), nameof(GameFlowManager.EvaluateCurrentStep))]
-internal static class GameFlowManager_EvaluateCurrentStep_Patch
+public static class Events
 {
-    public static void Postfix()
+    public static event EventHandler OnEvaluateStep;
+    public static event EventHandler OnStepEnd;
+    public static event EventHandler OnTurnEnd;
+
+    internal static void TriggerOnEvaluateStep()
     {
-        Melon<Core>.Logger.Msg("GameFlowManager_EvaluateCurrentStep");
+        OnEvaluateStep?.Invoke(sender: null, EventArgs.Empty);
     }
-}
 
-[HarmonyPatch(typeof(GameFlowManager), nameof(GameFlowManager.EndStep))]
-internal static class GameFlowManager_EndStep_Patch
-{
-    public static void Postfix()
+    internal static void TriggerOnStepEnd()
     {
-        Melon<Core>.Logger.Msg("GameFlowManager_EndStep");
+        OnStepEnd?.Invoke(sender: null, EventArgs.Empty);
     }
-}
 
-[HarmonyPatch(typeof(GameFlowManager), nameof(GameFlowManager.EndTurn))]
-internal static class GameFlowManager_EndTurn_Patch
-{
-    public static void Postfix()
+    internal static void TriggerOnTurnEnd()
     {
-        Melon<Core>.Logger.Msg("GameFlowManager_EndTurn");
+        OnTurnEnd?.Invoke(sender: null, EventArgs.Empty);
     }
 }

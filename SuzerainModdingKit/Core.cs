@@ -8,8 +8,6 @@ using UnityEngine.InputSystem;
 
 namespace SuzerainModdingKit;
 
-//TODO: fix crash once step is completed (likely from one of the patches in Events.cs)
-
 internal sealed class Core : MelonMod
 {
     private bool _showDebugOverlay;
@@ -44,20 +42,9 @@ internal sealed class Core : MelonMod
             return;
         }
 
-        string stepName = null;
-        try
-        {
-            stepName = Managers.Instance.GameFlowManager.currentStepData.NameInDatabase;
-        }
-        catch
-        {
-            // GameFlowManager may not be loaded.
-        }
+        string stepName = GameState.CurrentStepName;
 
-        Event e = Event.current;
-
-        Rect overlayRect = new(30, 200, 220, 300);
-        GUI.Box(overlayRect, "Debug Overlay");
+        GUI.Box(new Rect(30, 200, 220, 300), "Debug Overlay");
         GUI.Label(new Rect(30, 230, 200, 30), stepName ?? "GameFlowManager not loaded!");
         if (GUI.Button(new Rect(40, 270, 200, 30), "Hide (Ctrl+D)"))
         {
@@ -68,7 +55,7 @@ internal sealed class Core : MelonMod
             if (GUI.Button(new Rect(40, 310, 200, 30), "Next Step"))
             {
                 Managers.Instance.GameFlowManager.EndStep();
-                string newStepName = Managers.Instance.GameFlowManager.currentStepData.NameInDatabase;
+                string newStepName = GameState.CurrentStepName;
                 LoggerInstance.Msg($"Debug overlay: Skipped step '{stepName}'. New step: '{newStepName}'.");
             }
             if (GUI.Button(new Rect(40, 350, 200, 30), "Next Turn"))
@@ -76,13 +63,6 @@ internal sealed class Core : MelonMod
                 LoggerInstance.Msg("Debug overlay: Showing next turn button.");
                 Managers.Instance.GameFlowManager.ShowEndTurnButton();
             }
-        }
-
-        // cancel the event before it reaches the game
-        // so you can't click through the overlay
-        if (overlayRect.Contains(e.mousePosition) && e.isMouse && GUIUtility.hotControl == 0)
-        {
-            e.Use();
         }
     }
 }
