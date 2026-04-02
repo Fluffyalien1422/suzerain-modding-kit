@@ -2,6 +2,8 @@
 
 ## Setup
 
+**Important Note:** Suzerain Modding Kit currently only supports Windows and the Steam version of Suzerain.
+
 1. Install Visual Studio.
 2. Follow the instructions on the [MelonLoader Wiki](https://melonwiki.xyz/#/README) to download and install MelonLoader.
 3. Install a .NET decompiler like [dotPeek](https://www.jetbrains.com/decompiler/) or similar program of your choice.
