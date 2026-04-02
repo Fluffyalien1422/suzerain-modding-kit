@@ -481,7 +481,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<Compile Include="Constants.cs" />
+		<Compile Include="ModdingKitConstants.cs" />
 		<Compile Include="Core.cs" />
 		<Compile Include="Events.cs" />
 		<Compile Include="EventsPatches.cs" />

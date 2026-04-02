@@ -4,8 +4,9 @@ using SuzerainModdingKit.Save;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-[assembly: MelonInfo(typeof(SuzerainModdingKit.Core), "Suzerain Modding Kit", "1.0.0", "Fluffyalien", null)]
+[assembly: MelonInfo(typeof(SuzerainModdingKit.Core), "Suzerain Modding Kit", "0.1.0", "Fluffyalien", null)]
 [assembly: MelonGame("Torpor Games", "Suzerain")]
+// (also update version in Constants.cs)
 
 namespace SuzerainModdingKit;
 

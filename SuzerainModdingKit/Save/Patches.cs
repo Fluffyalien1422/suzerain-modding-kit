@@ -53,9 +53,9 @@ internal static class JsonSaveLoad_SaveDataToFile_Patch
         string json = System.Text.Json.JsonSerializer.Serialize(modSaveData);
 
         string fileName = Path.GetFileName(path);
-        string savePath = Path.Combine(Constants.ModSavePath, fileName);
+        string savePath = Path.Combine(ModdingKitConstants.ModSavePath, fileName);
 
-        Directory.CreateDirectory(Constants.ModSavePath);
+        Directory.CreateDirectory(ModdingKitConstants.ModSavePath);
         File.WriteAllText(savePath, json);
 
         Melon<Core>.Logger.Msg($"Saved mod data to '{savePath}'.");
@@ -68,7 +68,7 @@ internal static class PersistenceManager_LoadSaveFile_Patch
     public static void Postfix(SaveFile saveFile)
     {
         string fileName = Path.GetFileName(saveFile.path);
-        string savePath = Path.Combine(Constants.ModSavePath, fileName);
+        string savePath = Path.Combine(ModdingKitConstants.ModSavePath, fileName);
 
         if (!File.Exists(savePath))
         {
