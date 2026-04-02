@@ -1,3 +1,4 @@
+using System.Text.Json;
 using HarmonyLib;
 using Il2Cpp;
 using Il2CppPixelCrushers.DialogueSystem;
@@ -46,11 +47,20 @@ internal static class JsonSaveLoad_SaveDataToFile_Patch
             return;
         }
 
+        //TODO: rework this.
+        if (variables.Count == 0)
+        {
+            // We have to make sure we don't create an empty save file
+            // because Suzerain sometimes calls this function before loading the save,
+            // and we don't want to overwrite the existing save (if there is one).
+            return;
+        }
+
         ModSaveData modSaveData = new()
         {
             Variables = variables,
         };
-        string json = System.Text.Json.JsonSerializer.Serialize(modSaveData);
+        string json = JsonSerializer.Serialize(modSaveData);
 
         string fileName = Path.GetFileName(path);
         string savePath = Path.Combine(ModdingKitConstants.ModSavePath, fileName);
@@ -79,7 +89,7 @@ internal static class PersistenceManager_LoadSaveFile_Patch
         ModSaveData modSaveData;
         try
         {
-            modSaveData = System.Text.Json.JsonSerializer.Deserialize<ModSaveData>(json);
+            modSaveData = JsonSerializer.Deserialize<ModSaveData>(json);
         }
         catch (Exception e)
         {
@@ -97,7 +107,27 @@ internal static class PersistenceManager_LoadSaveFile_Patch
         {
             foreach (KeyValuePair<string, object> entry in modSaveData.Variables)
             {
-                Variables.Set(entry.Key, entry.Value);
+                JsonElement value = (JsonElement)entry.Value;
+                switch (value.ValueKind)
+                {
+                    case JsonValueKind.True:
+                    case JsonValueKind.False:
+                        Variables.Set(entry.Key, value.GetBoolean());
+                        break;
+                    case JsonValueKind.String:
+                        Variables.Set(entry.Key, value.GetString());
+                        break;
+                    case JsonValueKind.Number:
+                        Variables.Set(entry.Key, value.GetSingle());
+                        break;
+                    case JsonValueKind.Undefined:
+                    case JsonValueKind.Object:
+                    case JsonValueKind.Array:
+                    case JsonValueKind.Null:
+                    default:
+                        Melon<Core>.Logger.Warning($"Game variable '{entry.Key}' not loaded. Invalid type.");
+                        break;
+                }
             }
         }
         catch (Exception e)

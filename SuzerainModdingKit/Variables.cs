@@ -7,6 +7,13 @@ public static class Variables
 {
     internal static List<string> RegisteredVariables = [];
 
+    /// <summary>
+    /// Registers a game variable so Suzerain Modding Kit can save/load it.
+    /// </summary>
+    /// <param name="name">
+    /// The name of the variable.
+    /// Recommended style: PascalCaseModName.PascalCaseVariableName (eg. MyMod.MyVariable).
+    /// </param>
     public static void Register(string name)
     {
         if (RegisteredVariables.Contains(name, StringComparer.Ordinal))
@@ -18,26 +25,71 @@ public static class Variables
         RegisteredVariables.Add(name);
     }
 
+    /// <summary>
+    /// Get a bool variable. This can be a Suzerain variable or a custom variable.
+    /// </summary>
+    /// <param name="name">
+    /// The name of the variable.
+    /// </param>
+    /// <returns>
+    /// The value of the variable casted to a bool.
+    /// </returns>
     public static bool GetBool(string name)
     {
         return DialogueLua.GetVariable(name).AsBool;
     }
 
+    /// <summary>
+    /// Get an int variable. This can be a Suzerain variable or a custom variable.
+    /// </summary>
+    /// <param name="name">
+    /// The name of the variable.
+    /// </param>
+    /// <returns>
+    /// The value of the variable casted to an int.
+    /// </returns>
     public static int GetInt(string name)
     {
         return DialogueLua.GetVariable(name).AsInt;
     }
 
+    /// <summary>
+    /// Get a float variable. This can be a Suzerain variable or a custom variable.
+    /// </summary>
+    /// <param name="name">
+    /// The name of the variable.
+    /// </param>
+    /// <returns>
+    /// The value of the variable casted to a float.
+    /// </returns>
     public static float GetFloat(string name)
     {
         return DialogueLua.GetVariable(name).AsFloat;
     }
 
+    /// <summary>
+    /// Get a string variable. This can be a Suzerain variable or a custom variable.
+    /// </summary>
+    /// <param name="name">
+    /// The name of the variable.
+    /// </param>
+    /// <returns>
+    /// The value of the variable casted to a string.
+    /// </returns>
     public static string GetString(string name)
     {
         return DialogueLua.GetVariable(name).AsString;
     }
 
+    /// <summary>
+    /// Set a variable. This can be a Suzerain variable or a custom variable.
+    /// </summary>
+    /// <param name="name">
+    /// The name of the variable.
+    /// </param>
+    /// <param name="value">
+    /// The new value of the variable. Supported types: bool, int, float, string.
+    /// </param>
     public static void Set(string name, object value)
     {
         if (value is bool b)

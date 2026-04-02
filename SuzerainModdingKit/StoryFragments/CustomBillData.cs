@@ -28,14 +28,6 @@ public class CustomBillData
     {
         get; init;
     }
-    public string SignVariables
-    {
-        get; init;
-    }
-    public string VetoVariables
-    {
-        get; init;
-    }
 
     public CustomBillData(
         string name,
@@ -43,9 +35,7 @@ public class CustomBillData
         string title,
         string description,
         string hubTitle,
-        string hubDescription,
-        string signVariables,
-        string vetoVariables)
+        string hubDescription)
     {
         Name = name ?? throw new ArgumentNullException(nameof(name));
         AssignedTokenName = assignedTokenName ?? throw new ArgumentNullException(nameof(assignedTokenName));
@@ -53,8 +43,6 @@ public class CustomBillData
         Description = description ?? throw new ArgumentNullException(nameof(description));
         HubTitle = hubTitle ?? throw new ArgumentNullException(nameof(hubTitle));
         HubDescription = hubDescription ?? throw new ArgumentNullException(nameof(hubDescription));
-        SignVariables = signVariables ?? throw new ArgumentNullException(nameof(signVariables));
-        VetoVariables = vetoVariables ?? throw new ArgumentNullException(nameof(vetoVariables));
     }
 
     internal BillData ToSuzerainBillData()
@@ -65,8 +53,10 @@ public class CustomBillData
             Description = Description,
             HubTitle = HubTitle,
             HubDescription = HubDescription,
-            SignVariables = SignVariables,
-            VetoVariables = VetoVariables,
+            // These properties don't seem to do anything.
+            // Use Events.OnBillSigned/Vetoed instead.
+            SignVariables = "",
+            VetoVariables = "",
         };
         BillData customBillData = new()
         {
