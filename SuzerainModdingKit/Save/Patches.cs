@@ -11,6 +11,14 @@ internal static class JsonSaveLoad_SaveDataToFile_Patch
 {
     public static void Postfix(string path)
     {
+        if (!GameState.IsGameActive())
+        {
+            // Return if the game is not active. This function may be called
+            // before the game actually starts loading, so if we create a
+            // save file, it would overwrite the existing save.
+            return;
+        }
+
         Dictionary<string, object> variables = [];
         try
         {
@@ -18,7 +26,7 @@ internal static class JsonSaveLoad_SaveDataToFile_Patch
             {
                 if (!DialogueLua.DoesVariableExist(variableName))
                 {
-                    // silently skip if it doesn't exist.
+                    // Silently skip if it doesn't exist.
                     continue;
                 }
 
@@ -47,12 +55,9 @@ internal static class JsonSaveLoad_SaveDataToFile_Patch
             return;
         }
 
-        //TODO: rework this.
         if (variables.Count == 0)
         {
-            // We have to make sure we don't create an empty save file
-            // because Suzerain sometimes calls this function before loading the save,
-            // and we don't want to overwrite the existing save (if there is one).
+            // There is nothing to save. Don't create an empty save file.
             return;
         }
 
