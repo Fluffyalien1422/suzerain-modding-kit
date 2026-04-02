@@ -9,6 +9,29 @@ internal static class SaveManager
     private static bool _firstLoadSaveCalled;
     private static string _loadedSaveName;
 
+    public static void CleanupOrphanedModSaves()
+    {
+        if (!Directory.Exists(ModdingKitConstants.ModSavePath))
+        {
+            return;
+        }
+
+        HashSet<string> suzerainSaveNames = Directory
+            .GetFiles(ModdingKitConstants.SuzerainSavePath, "*.json", SearchOption.TopDirectoryOnly)
+            .Select(Path.GetFileName)
+            .ToHashSet(StringComparer.OrdinalIgnoreCase);
+        string[] modSavePaths = Directory.GetFiles(ModdingKitConstants.ModSavePath, "*.json", SearchOption.TopDirectoryOnly);
+
+        foreach (string filePath in modSavePaths)
+        {
+            string fileName = Path.GetFileName(filePath);
+            if (!suzerainSaveNames.Contains(fileName))
+            {
+                File.Delete(filePath);
+            }
+        }
+    }
+
     public static void OnSuzerainLoadSaveFile(string fileName, bool isActiveSave)
     {
         if (_firstLoadSaveCalled && isActiveSave)

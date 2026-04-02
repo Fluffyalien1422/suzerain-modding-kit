@@ -17,7 +17,7 @@ internal sealed class Core : MelonMod
     public override void OnInitializeMelon()
     {
         LoggerInstance.Msg("Cleaning up mod saves.");
-        ModSaveCleanup.CleanupOrphanedModSaves();
+        SaveManager.CleanupOrphanedModSaves();
         LoggerInstance.Msg("Initialized.");
     }
 
