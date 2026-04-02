@@ -1,5 +1,6 @@
 using Il2Cpp;
 using MelonLoader;
+using SuzerainModdingKit.Save;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -15,10 +16,8 @@ internal sealed class Core : MelonMod
     public override void OnInitializeMelon()
     {
         LoggerInstance.Msg("Cleaning up mod saves.");
-        Save.ModSaveCleanup.CleanupOrphanedModSaves();
+        ModSaveCleanup.CleanupOrphanedModSaves();
         LoggerInstance.Msg("Initialized.");
-
-        Variables.Register("SuzerainModdingKit.TestVar");
     }
 
     public override void OnUpdate()

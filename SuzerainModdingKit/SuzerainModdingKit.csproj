@@ -486,9 +486,11 @@
 		<Compile Include="Events.cs" />
 		<Compile Include="EventsPatches.cs" />
 		<Compile Include="GameState.cs" />
+		<Compile Include="InternalUtils.cs" />
 		<Compile Include="Save\ModSaveCleanup.cs" />
 		<Compile Include="Save\ModSaveData.cs" />
 		<Compile Include="Save\Patches.cs" />
+		<Compile Include="StoryFragments\CustomBillData.cs" />
 		<Compile Include="Variables.cs" />
 	</ItemGroup>
 
