@@ -15,6 +15,9 @@ public static class GameState
         return CurrentStepName != null;
     }
 
+    //TODO: show the exclamation icon for custom story fragments
+    //TODO: journal api to add "I signed the XYZ act" etc strings to the journal
+    //TODO: require completion of custom story fragments to end the step
     public static void AddCustomBill(CustomBillData customBillData)
     {
         if (!IsGameActive())
@@ -23,7 +26,25 @@ public static class GameState
         }
 
         BillData billData = customBillData.ToSuzerainBillData();
-        EntityDataManager.AllBillsData.Add(billData);
+
+        Func<BillData, bool> match = d => string.Equals(d.NameInDatabase, billData.NameInDatabase, StringComparison.Ordinal);
+        bool existsInRegistry = EntityDataManager.AllBillsData.Exists(match);
+        if (!existsInRegistry)
+        {
+            EntityDataManager.AllBillsData.Add(billData);
+        }
+
         Managers.Instance.GameFlowManager.enabledNotDoneStoryFragments.Add(billData);
+
+        //Panels.Instance.TokenIndicatorPanel.TryAddTokenIndicator(billData.AssignedTokenProperties.AssignedToken, TokenIndicatorPanel.TokenIndicatorType.StoryFragment, Panels.Instance.TokenIndicatorPanel.tokenIndicators);
+        //foreach (TokenIndicatorPanel.TokenIndicator ind in Panels.Instance.TokenIndicatorPanel.tokenIndicators)
+        //{
+        //    Melon<Core>.Logger.Msg($"Token indicator: {ind.token.tokenDataEntityName} {ind.token.tokenType} {ind.tokenIndicatorType}");
+        //    if (string.Equals(ind.token.tokenDataEntityName, billData.AssignedTokenProperties.AssignedToken, StringComparison.Ordinal))
+        //    {
+        //        Melon<Core>.Logger.Msg($"Showing token indicator for {billData.AssignedTokenProperties.AssignedToken}");
+        //        Panels.Instance.TokenIndicatorPanel.ShowTokenIndicator(ind.token);
+        //    }
+        //}
     }
 }
