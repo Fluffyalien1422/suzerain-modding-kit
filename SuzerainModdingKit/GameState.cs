@@ -18,33 +18,49 @@ public static class GameState
         return CurrentStepName != null;
     }
 
+    public static bool StoryFragmentExistsInCurrentStep(string name)
+    {
+        return Managers.Instance?.GameFlowManager?.currentStepData?.StoryFragments?.Contains(name)
+            ?? false;
+    }
+
     //TODO: journal api to add "I signed the XYZ act" etc strings to the journal
-    //TODO: require completion of custom story fragments to end the step
     public static void AddCustomBill(CustomBillData customBillData)
     {
+        // This method adds a custom bill to the current step dynamically.
+        // We don't use Suzerain's registry because Suzerain doesn't recognize
+        // custom variables in conditions. Adding story fragments dynamically
+        // also allows more control for modders.
+
         if (!IsGameActive())
         {
             throw new InvalidOperationException(
                 "Cannot add a story fragment when the game is not active.");
         }
 
+        if (StoryFragmentExistsInCurrentStep(customBillData.Name))
+        {
+            throw new InvalidOperationException(
+                $"A story fragment with the name '{customBillData.Name}' already exists in the current step.");
+        }
+
+        GameFlowManager gameFlowManager = Managers.Instance.GameFlowManager;
         BillData billData = customBillData.ToSuzerainBillData();
 
         // Check if the bill data already exists in the registry.
         Func<BillData, bool> match = d => string.Equals(
             d.NameInDatabase,
-            billData.NameInDatabase,
+            customBillData.Name,
             StringComparison.Ordinal);
         bool existsInRegistry = EntityDataManager.AllBillsData.Exists(match);
         if (!existsInRegistry)
         {
-            // We add the bill data to the registry on demand,
-            // since the registry resets when a game is loaded.
             EntityDataManager.AllBillsData.Add(billData);
         }
 
         // Add it to the scene and create the token indicator (the exclamation icon).
-        Managers.Instance.GameFlowManager.enabledNotDoneStoryFragments.Add(billData);
+        gameFlowManager.enabledNotDoneStoryFragments.Add(billData);
+        gameFlowManager.currentStepData.StoryFragments.Add(customBillData.Name);
         CreateTokenIndicator(
             customBillData.AssignedTokenName,
             TokenIndicatorPanel.TokenIndicatorType.StoryFragment);

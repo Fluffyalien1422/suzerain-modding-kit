@@ -16,8 +16,24 @@ internal sealed class Core : MelonMod
 
     public override void OnInitializeMelon()
     {
+        LoggerInstance.Msg(
+            $"Suzerain Modding Kit version: {ModdingKitConstants.ModVersion}, " +
+            $"Suzerain version: {Application.version}, " +
+            $"Target Suzerain version: {ModdingKitConstants.TargetSuzerainVersion}.");
+
+        if (!string.Equals(
+            Application.version,
+            ModdingKitConstants.TargetSuzerainVersion,
+            StringComparison.Ordinal))
+        {
+            LoggerInstance.Warning(
+                $"Expected Suzerain version {ModdingKitConstants.TargetSuzerainVersion}, " +
+                $"but got {Application.version}. Suzerain Modding Kit may not work properly.");
+        }
+
         LoggerInstance.Msg("Cleaning up mod saves.");
         SaveManager.CleanupOrphanedModSaves();
+
         LoggerInstance.Msg("Initialized.");
     }
 
