@@ -7,6 +7,7 @@ public static class Events
     public static event EventHandler OnTurnEnd;
     public static event EventHandler<BillEventArgs> OnBillSigned;
     public static event EventHandler<BillEventArgs> OnBillVetoed;
+    public static event EventHandler OnJournalInitialized;
 
     public class BillEventArgs : EventArgs
     {
@@ -44,5 +45,10 @@ public static class Events
     internal static void TriggerOnBillVetoed(string billName)
     {
         OnBillVetoed?.Invoke(sender: null, new BillEventArgs(billName));
+    }
+
+    internal static void TriggerOnJournalInitialized()
+    {
+        OnJournalInitialized?.Invoke(sender: null, EventArgs.Empty);
     }
 }

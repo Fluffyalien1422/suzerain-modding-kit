@@ -2,10 +2,9 @@ using System.Globalization;
 using Il2Cpp;
 
 namespace SuzerainModdingKit.Journal;
+
 public static class JournalManager
 {
-    //TODO: add a journal initialized event so mods can add all past journal entries.
-    // (journal is not yet loaded in OnEvaluateStep)
     public static void AddCustomJournalEntry(CustomJournalEntryData entry)
     {
         if (!GameState.IsGameActive())

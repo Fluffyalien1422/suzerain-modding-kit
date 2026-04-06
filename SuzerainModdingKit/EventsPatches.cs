@@ -9,7 +9,7 @@ internal static class GameFlowManager_EvaluateCurrentStep_Patch
 {
     public static void Postfix()
     {
-        Melon<Core>.Logger.Msg("Event: OnEvaluateStep (GameFlowManager.EvaluateCurrentStep).");
+        Melon<Core>.Logger.Msg("Event: OnEvaluateStep.");
         Events.TriggerOnEvaluateStep();
     }
 }
@@ -20,7 +20,7 @@ internal static class GameFlowManager_EndStep_Patch
     // using Postfix crashes the game.
     public static void Prefix()
     {
-        Melon<Core>.Logger.Msg("Event: OnStepEnd (GameFlowManager.EndStep).");
+        Melon<Core>.Logger.Msg("Event: OnStepEnd.");
         Events.TriggerOnStepEnd();
     }
 }
@@ -30,7 +30,7 @@ internal static class GameFlowManager_EndTurn_Patch
 {
     public static void Postfix()
     {
-        Melon<Core>.Logger.Msg("Event: OnTurnEnd (GameFlowManager.EndTurn).");
+        Melon<Core>.Logger.Msg("Event: OnTurnEnd.");
         Events.TriggerOnTurnEnd();
     }
 }
@@ -40,8 +40,8 @@ internal static class BillPanel_SignBill_Patch
 {
     public static void Postfix(BillPanel __instance)
     {
-        Melon<Core>.Logger.Msg("Event: OnBillSigned (BillPanel.SignBill).");
         string billName = __instance.currentBillData.NameInDatabase;
+        Melon<Core>.Logger.Msg($"Event: OnBillSigned ({billName}).");
         Events.TriggerOnBillSigned(billName);
     }
 }
@@ -51,8 +51,25 @@ internal static class BillPanel_VetoBill_Patch
 {
     public static void Postfix(BillPanel __instance)
     {
-        Melon<Core>.Logger.Msg("Event: OnBillVetoed (BillPanel.VetoBill).");
         string billName = __instance.currentBillData.NameInDatabase;
+        Melon<Core>.Logger.Msg($"Event: OnBillVetoed ({billName}).");
         Events.TriggerOnBillVetoed(billName);
+    }
+}
+
+[HarmonyPatch(typeof(JournalDecisionsPage), nameof(JournalDecisionsPage.CreateJournalTurn))]
+internal static class JournalDecisionsPage_CreateJournalTurn_Patch
+{
+    public static void Postfix(int turnNo)
+    {
+        // Suzerain creates each journal turn in descending order. Once we reach turn 1,
+        // all other turns have been created. Note that this is called (twice) every turn.
+        if (turnNo != 1)
+        {
+            return;
+        }
+
+        Melon<Core>.Logger.Msg("Event: OnJournalInitialized.");
+        Events.TriggerOnJournalInitialized();
     }
 }
