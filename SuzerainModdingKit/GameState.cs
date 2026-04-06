@@ -24,7 +24,6 @@ public static class GameState
             ?? false;
     }
 
-    //TODO: journal api to add "I signed the XYZ act" etc strings to the journal
     public static void AddCustomBill(CustomBillData customBillData)
     {
         // This method adds a custom bill to the current step dynamically.

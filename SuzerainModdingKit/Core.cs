@@ -6,7 +6,7 @@ using UnityEngine.InputSystem;
 
 [assembly: MelonInfo(typeof(SuzerainModdingKit.Core), "Suzerain Modding Kit", "0.1.0", "Fluffyalien", null)]
 [assembly: MelonGame("Torpor Games", "Suzerain")]
-// (also update version in Constants.cs)
+// (also update version in ModdingKitConstants.cs)
 
 namespace SuzerainModdingKit;
 

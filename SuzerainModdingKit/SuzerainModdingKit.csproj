@@ -481,6 +481,8 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+		<Compile Include="Journal\CustomJournalEntryData.cs" />
+		<Compile Include="Journal\JournalManager.cs" />
 		<Compile Include="ModdingKitConstants.cs" />
 		<Compile Include="Core.cs" />
 		<Compile Include="Events.cs" />

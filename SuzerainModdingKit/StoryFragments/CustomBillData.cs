@@ -47,7 +47,7 @@ public class CustomBillData
 
     internal BillData ToSuzerainBillData()
     {
-        BillProperties customBillProperties = new()
+        BillProperties properties = new()
         {
             Title = Title,
             Description = Description,
@@ -58,7 +58,7 @@ public class CustomBillData
             SignVariables = "",
             VetoVariables = "",
         };
-        BillData customBillData = new()
+        BillData data = new()
         {
             AppBundleProperties = new AppBundleProperties()
             {
@@ -69,7 +69,7 @@ public class CustomBillData
             {
                 AssignedToken = AssignedTokenName,
             },
-            BillProperties = customBillProperties,
+            BillProperties = properties,
             NameInDatabase = Name,
             Path = "Sordland/Bills",
             StoryFragmentProperties = new StoryFragmentProperties()
@@ -80,6 +80,6 @@ public class CustomBillData
             },
             TagsProperties = new TagsProperties(),
         };
-        return customBillData;
+        return data;
     }
 }
