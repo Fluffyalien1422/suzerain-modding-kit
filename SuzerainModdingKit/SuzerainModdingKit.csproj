@@ -481,6 +481,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+		<Compile Include="DebugOverlay.cs" />
 		<Compile Include="Journal\CustomJournalEntryData.cs" />
 		<Compile Include="Journal\JournalManager.cs" />
 		<Compile Include="ModdingKitConstants.cs" />
