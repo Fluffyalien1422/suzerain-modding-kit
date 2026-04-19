@@ -47,10 +47,11 @@ internal static class DebugOverlay
         string stepName = GameState.CurrentStepName;
 
         int overlayWidth = _varsList == null ? OverlayWidthDefault : OverlayWidthVarsList;
-        GUILayout.BeginArea(new Rect(10, 10, overlayWidth, overlayWidth));
+        int overlayX = Screen.width - overlayWidth - 10;
+        GUILayout.BeginArea(new Rect(overlayX, 10, overlayWidth, overlayWidth));
         GUILayout.BeginVertical(GUI.skin.box);
 
-        GUILayout.Label("Debug Overlay");
+        GUILayout.Label("Suzerain Modding Kit Debug Overlay");
         GUILayout.Label(stepName ?? "GameFlowManager not loaded!");
 
         if (_varsList == null)
@@ -104,8 +105,9 @@ internal static class DebugOverlay
 
     public sealed class VariableSearchOverlay
     {
-        private const float _itemHeight = 25f;
-        private const float _listHeight = 200f;
+        public const float ItemHeight = 25f;
+        public const float ListHeight = 200f;
+        public const int ElementPaddingRight = 35;
 
         private string _searchQuery = "";
         private Vector2 _scrollPos;
@@ -135,18 +137,21 @@ internal static class DebugOverlay
             }
 
             int itemCount = _filteredItems.Count;
-            float totalHeight = itemCount * _itemHeight;
+            float totalHeight = itemCount * ItemHeight;
 
-            _scrollPos = GUILayout.BeginScrollView(_scrollPos, GUILayout.Height(_listHeight));
+            _scrollPos = GUILayout.BeginScrollView(_scrollPos, GUILayout.Height(ListHeight));
 
-            int firstVisible = Mathf.Max(0, Mathf.FloorToInt(_scrollPos.y / _itemHeight));
+            int firstVisible = Mathf.Max(0, Mathf.FloorToInt(_scrollPos.y / ItemHeight));
             int lastVisible = Mathf.Min(itemCount - 1,
-                                   Mathf.CeilToInt((_scrollPos.y + _listHeight) / _itemHeight));
+                                   Mathf.CeilToInt((_scrollPos.y + ListHeight) / ItemHeight));
 
             // Render only visible items using absolute Rect positioning inside the scroll view.
             for (int i = firstVisible; i <= lastVisible; i++)
             {
-                Rect rect = new(0, i * _itemHeight, OverlayWidthVarsList, _itemHeight);
+                Rect rect = new(0,
+                    i * ItemHeight,
+                    OverlayWidthVarsList - ElementPaddingRight,
+                    ItemHeight);
                 string varName = _filteredItems[i];
                 if (GUI.Button(rect, varName, _buttonStyle))
                 {
@@ -172,7 +177,7 @@ internal static class DebugOverlay
 
             GUILayout.Label("Search:");
             string newSearchQuery = GUILayout.TextField(_searchQuery,
-                GUILayout.Width(OverlayWidthVarsList - 50));
+                GUILayout.Width(OverlayWidthVarsList - ElementPaddingRight));
 
             // Update the filtered items if the search query has changed.
             if (_filteredItems == null ||
