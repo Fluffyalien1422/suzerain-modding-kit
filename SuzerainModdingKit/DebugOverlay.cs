@@ -1,7 +1,7 @@
+using System.Globalization;
 using Il2Cpp;
 using Il2CppInterop.Runtime.InteropTypes.Arrays;
 using Il2CppPixelCrushers.DialogueSystem;
-using Il2CppTMPro;
 using MelonLoader;
 using UnityEngine;
 
@@ -75,11 +75,6 @@ internal static class DebugOverlay
                     Melon<Core>.Logger.Msg("Debug overlay: Showing next turn button.");
                     Managers.Instance.GameFlowManager.ShowEndTurnButton();
                 }
-                if (GUILayout.Button("Reevaluate Step"))
-                {
-                    Melon<Core>.Logger.Msg("Debug overlay: Reevaluating current step.");
-                    Managers.Instance.GameFlowManager.EvaluateCurrentStep();
-                }
                 if (GUILayout.Button("Variables"))
                 {
                     _varsList = new();
@@ -117,6 +112,7 @@ internal static class DebugOverlay
             fontSize = 11,
             alignment = TextAnchor.MiddleLeft,
         };
+        private VariableEditorOverlay _editor;
 
         private void ComputeFilteredItems()
         {
@@ -155,12 +151,7 @@ internal static class DebugOverlay
                 string varName = _filteredItems[i];
                 if (GUI.Button(rect, varName, _buttonStyle))
                 {
-                    TMP_InputField field = Panels.Instance?.DebugConsolePanel?.inputField;
-                    if (field != null)
-                    {
-                        field.Append($"Variable['{varName}']");
-                        field.ActivateInputField();
-                    }
+                    _editor = new(varName);
                 }
             }
 
@@ -175,6 +166,19 @@ internal static class DebugOverlay
         {
             GUILayout.Label("Variables");
 
+            if (_editor != null)
+            {
+                if (GUILayout.Button("Back to Search"))
+                {
+                    _editor = null;
+                }
+                else
+                {
+                    _editor.Update();
+                }
+                return;
+            }
+
             GUILayout.Label("Search:");
             string newSearchQuery = GUILayout.TextField(_searchQuery,
                 GUILayout.Width(OverlayWidthVarsList - ElementPaddingRight));
@@ -188,6 +192,68 @@ internal static class DebugOverlay
             _searchQuery = newSearchQuery;
 
             DrawList();
+        }
+    }
+
+    public sealed class VariableEditorOverlay
+    {
+        public readonly string VariableName;
+        private string _resultMessage;
+        private string _newValue = "";
+
+        public VariableEditorOverlay(string variableName)
+        {
+            VariableName = variableName ?? throw new ArgumentNullException(nameof(variableName));
+        }
+
+        public void Update()
+        {
+            GUILayout.Label($"Variable: {VariableName}");
+            GUILayout.Label("Value | " +
+                $"Bool: {Variables.GetBool(VariableName)} | " +
+                $"Float: {Variables.GetFloat(VariableName)
+                    .ToString(CultureInfo.InvariantCulture)} | " +
+                $"String: {Variables.GetString(VariableName)} |");
+
+            if (!string.IsNullOrEmpty(_resultMessage))
+            {
+                GUILayout.Label($"Result: {_resultMessage}");
+            }
+
+            _newValue = GUILayout.TextField(_newValue,
+                GUILayout.Width(OverlayWidthVarsList - VariableSearchOverlay.ElementPaddingRight));
+
+            if (GUILayout.Button("Set Bool"))
+            {
+                if (bool.TryParse(_newValue, out bool boolValue))
+                {
+                    Variables.Set(VariableName, boolValue);
+                    _resultMessage = $"'{VariableName}' set to {boolValue}.";
+                }
+                else
+                {
+                    _resultMessage = $"Error: '{_newValue}' is not a valid bool.";
+                }
+            }
+            if (GUILayout.Button("Set Float"))
+            {
+                if (float.TryParse(_newValue, NumberStyles.Float, CultureInfo.InvariantCulture,
+                    out float floatValue))
+                {
+                    Variables.Set(VariableName, floatValue);
+                    _resultMessage = $"'{VariableName}' set to {floatValue
+                        .ToString(CultureInfo.InvariantCulture)}.";
+                }
+                else
+                {
+                    _resultMessage = $"Error: '{_newValue}' is not a valid float.";
+                }
+            }
+            if (GUILayout.Button("Set String"))
+            {
+                Variables.Set(VariableName, _newValue);
+                _resultMessage = $"'{VariableName}' set to '{_newValue}'.";
+            }
         }
     }
 }
