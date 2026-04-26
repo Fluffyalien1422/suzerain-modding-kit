@@ -14,17 +14,17 @@ internal sealed class Core : MelonMod
     public override void OnInitializeMelon()
     {
         LoggerInstance.Msg(
-            $"Suzerain Modding Kit version: {ModdingKitConstants.ModVersion}, " +
+            $"Suzerain Modding Kit version: {SmkInfo.ModVersion}, " +
             $"Suzerain version: {Application.version}, " +
-            $"Target Suzerain version: {ModdingKitConstants.TargetSuzerainVersion}.");
+            $"Target Suzerain version: {SmkInfo.TargetSuzerainVersion}.");
 
         if (!string.Equals(
             Application.version,
-            ModdingKitConstants.TargetSuzerainVersion,
+            SmkInfo.TargetSuzerainVersion,
             StringComparison.Ordinal))
         {
             LoggerInstance.Warning(
-                $"Expected Suzerain version {ModdingKitConstants.TargetSuzerainVersion}, " +
+                $"Expected Suzerain version {SmkInfo.TargetSuzerainVersion}, " +
                 $"but got {Application.version}. Suzerain Modding Kit may not work properly.");
         }
 

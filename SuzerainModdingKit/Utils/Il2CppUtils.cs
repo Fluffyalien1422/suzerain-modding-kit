@@ -1,6 +1,6 @@
-namespace SuzerainModdingKit;
+namespace SuzerainModdingKit.Utils;
 
-internal static class InternalUtils
+internal static class Il2CppUtils
 {
     public static Il2CppSystem.Collections.Generic.List<T> CreateIl2CppList<T>(List<T> list)
     {

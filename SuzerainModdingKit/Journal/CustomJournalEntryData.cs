@@ -1,4 +1,5 @@
 using Il2Cpp;
+using SuzerainModdingKit.Utils;
 
 namespace SuzerainModdingKit.Journal;
 
@@ -36,7 +37,7 @@ public class CustomJournalEntryData
             AppBundleProperties = new AppBundleProperties()
             {
                 AppBundle = "AppBundle_Main",
-                StoryPacks = InternalUtils.CreateIl2CppList(["StoryPack_Main"]),
+                StoryPacks = Il2CppUtils.CreateIl2CppList(["StoryPack_Main"]),
             },
             JournalEntryProperties = properties,
             NameInDatabase = Name,

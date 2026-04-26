@@ -1,5 +1,11 @@
 # Contributing
 
+## Coding Guidelines and Info
+
+Please read and follow the [coding guidelines](CODING_GUIDELINES.md) when contributing to Suzerain Modding Kit.
+
+Reading the [Suzerain Implementation Info](suzerain_implementation_info.md) document will also be helpful in understanding how Suzerain works.
+
 ## Basic Setup
 
 **Important Note:** Suzerain Modding Kit currently only supports Windows and the Steam version of Suzerain.
@@ -13,8 +19,10 @@
 7. Build the solution and it will automatically be copied to the `Mods` folder (ensure Suzerain is closed). Launch Suzerain to test.
 
 ## Decompiling with Ghidra
+
 The standard decompiling method explained above only allows you to see type names. This should be sufficient in most cases, but we can also decompile the actual code using Ghidra.
 
 See [this gist](https://gist.github.com/BadMagic100/47096cbcf64ec0509cf75d48cfbdaea5) which explains how to decompile IL2CPP games (like Suzerain) with Ghidra. **You must make the following changes to the guide to use it in newer versions of Ghidra:**
+
 - The guide tells you to use OpenJDK 17, but newer versions of Ghidra require a different version. See [the latest requirements](https://github.com/NationalSecurityAgency/ghidra/blob/master/GhidraDocs/GettingStarted.md#minimum-requirements).
 - Add `# @runtime Jython` to the first line of `ghidra_with_struct.py` before running it in Ghidra.

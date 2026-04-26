@@ -63,7 +63,8 @@ internal static class JournalDecisionsPage_CreateJournalTurn_Patch
     public static void Postfix(int turnNo)
     {
         // Suzerain creates each journal turn in descending order. Once we reach turn 1,
-        // all other turns have been created. Note that this is called (twice) every turn.
+        // all other turns have been created. Note that this is called every turn,
+        // and may be called twice.
         if (turnNo != 1)
         {
             return;

@@ -1,4 +1,5 @@
 using Il2Cpp;
+using SuzerainModdingKit.Utils;
 
 namespace SuzerainModdingKit.StoryFragments;
 
@@ -53,17 +54,13 @@ public class CustomBillData
             Description = Description,
             HubTitle = HubTitle,
             HubDescription = HubDescription,
-            // These properties don't seem to do anything.
-            // Use Events.OnBillSigned/Vetoed instead.
-            SignVariables = "",
-            VetoVariables = "",
         };
         BillData data = new()
         {
             AppBundleProperties = new AppBundleProperties()
             {
                 AppBundle = "AppBundle_Main",
-                StoryPacks = InternalUtils.CreateIl2CppList(["StoryPack_Main"]),
+                StoryPacks = Il2CppUtils.CreateIl2CppList(["StoryPack_Main"]),
             },
             AssignedTokenProperties = new AssignedTokenProperties()
             {
@@ -72,12 +69,7 @@ public class CustomBillData
             BillProperties = properties,
             NameInDatabase = Name,
             Path = "Sordland/Bills",
-            StoryFragmentProperties = new StoryFragmentProperties()
-            {
-                IsDone = false,
-                OnStoryFragmentBeginInstruction = "",
-                OnStoryFragmentEndInstruction = "",
-            },
+            StoryFragmentProperties = new StoryFragmentProperties(),
             TagsProperties = new TagsProperties(),
         };
         return data;

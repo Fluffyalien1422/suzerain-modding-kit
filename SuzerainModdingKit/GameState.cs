@@ -27,9 +27,8 @@ public static class GameState
     public static void AddCustomBill(CustomBillData customBillData)
     {
         // This method adds a custom bill to the current step dynamically.
-        // We don't use Suzerain's registry because Suzerain doesn't recognize
-        // custom variables in conditions. Adding story fragments dynamically
-        // also allows more control for modders.
+        // We don't use Suzerain's registry because articy:expresso scripts
+        // don't recognize custom variables.
 
         if (!IsGameActive())
         {
@@ -57,9 +56,15 @@ public static class GameState
             EntityDataManager.AllBillsData.Add(billData);
         }
 
-        // Add it to the scene and create the token indicator (the exclamation icon).
-        gameFlowManager.enabledNotDoneStoryFragments.Add(billData);
+        // Add it to the scene.
         gameFlowManager.currentStepData.StoryFragments.Add(customBillData.Name);
+        gameFlowManager.EvaluateStoryFragment(
+            isEnabled: true,
+            isDone: false,
+            billData,
+            billData.NameInDatabase);
+
+        // Create the exclamation icon.
         CreateTokenIndicator(
             customBillData.AssignedTokenName,
             TokenIndicatorPanel.TokenIndicatorType.StoryFragment);

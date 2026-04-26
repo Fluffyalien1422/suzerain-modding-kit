@@ -6,21 +6,25 @@ namespace SuzerainModdingKit.Save;
 
 internal static class SaveManager
 {
+    public static readonly string UserDir = Environment.GetEnvironmentVariable("userprofile");
+    public static readonly string SuzerainSavePath = Path.Combine(UserDir, @"AppData\LocalLow\Torpor Games\Suzerain");
+    public static readonly string ModSavePath = Path.Combine(SuzerainSavePath, "moddingkit");
+
     private static bool _firstLoadSaveCalled;
     private static string _loadedSaveName;
 
     public static void CleanupOrphanedModSaves()
     {
-        if (!Directory.Exists(ModdingKitConstants.ModSavePath))
+        if (!Directory.Exists(ModSavePath))
         {
             return;
         }
 
         HashSet<string> suzerainSaveNames = Directory
-            .GetFiles(ModdingKitConstants.SuzerainSavePath, "*.json", SearchOption.TopDirectoryOnly)
+            .GetFiles(SuzerainSavePath, "*.json", SearchOption.TopDirectoryOnly)
             .Select(Path.GetFileName)
             .ToHashSet(StringComparer.OrdinalIgnoreCase);
-        string[] modSavePaths = Directory.GetFiles(ModdingKitConstants.ModSavePath, "*.json", SearchOption.TopDirectoryOnly);
+        string[] modSavePaths = Directory.GetFiles(ModSavePath, "*.json", SearchOption.TopDirectoryOnly);
 
         foreach (string filePath in modSavePaths)
         {
@@ -55,7 +59,7 @@ internal static class SaveManager
 
     public static void Save(string fileName)
     {
-        string savePath = Path.Combine(ModdingKitConstants.ModSavePath, fileName);
+        string savePath = Path.Combine(ModSavePath, fileName);
 
         Dictionary<string, object> variables = [];
         try
@@ -105,7 +109,7 @@ internal static class SaveManager
         };
         string json = JsonSerializer.Serialize(modSaveData);
 
-        Directory.CreateDirectory(ModdingKitConstants.ModSavePath);
+        Directory.CreateDirectory(ModSavePath);
         File.WriteAllText(savePath, json);
 
         Melon<Core>.Logger.Msg($"Saved mod data to '{savePath}'.");
@@ -114,7 +118,7 @@ internal static class SaveManager
     private static void LoadSave(string fileName)
     {
         _loadedSaveName = fileName;
-        string savePath = Path.Combine(ModdingKitConstants.ModSavePath, fileName);
+        string savePath = Path.Combine(ModSavePath, fileName);
 
         if (!File.Exists(savePath))
         {

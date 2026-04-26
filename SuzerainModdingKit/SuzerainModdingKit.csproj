@@ -484,16 +484,18 @@
 		<Compile Include="DebugOverlay.cs" />
 		<Compile Include="Journal\CustomJournalEntryData.cs" />
 		<Compile Include="Journal\JournalManager.cs" />
-		<Compile Include="ModdingKitConstants.cs" />
 		<Compile Include="Core.cs" />
 		<Compile Include="Events.cs" />
 		<Compile Include="EventsPatches.cs" />
 		<Compile Include="GameState.cs" />
-		<Compile Include="InternalUtils.cs" />
 		<Compile Include="Save\ModSaveData.cs" />
 		<Compile Include="Save\Patches.cs" />
 		<Compile Include="Save\SaveManager.cs" />
+		<Compile Include="SmkInfo.cs" />
+		<Compile Include="StoryFragments\Conversation\Patches.cs" />
 		<Compile Include="StoryFragments\CustomBillData.cs" />
+		<Compile Include="Utils\ArticyIdGenerator.cs" />
+		<Compile Include="Utils\Il2CppUtils.cs" />
 		<Compile Include="Variables.cs" />
 	</ItemGroup>
 
