@@ -1,5 +1,6 @@
 using MelonLoader;
 using SuzerainModdingKit.Save;
+using SuzerainModdingKit.StoryFragments.Conversation;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -30,6 +31,28 @@ internal sealed class Core : MelonMod
 
         LoggerInstance.Msg("Cleaning up mod saves.");
         SaveManager.CleanupOrphanedModSaves();
+
+        //TODO: functions to get node IDs from articy IDs, since node IDs can change with game updates.
+        //TODO: multiple outgoing links from a node.
+        //TODO: automatically chain injections from multiple mods together
+        // so multiple mods can hook to the same parent node.
+        //TOOD: ability to reference another mod's node as parent or next
+        //_ = ConversationRegistry.RegisterInjection(
+        //    new ConversationInjection("Sordland/Turn02/Personal_Funeral")
+        //        .AddNode(new ConversationNode(
+        //            name: "TestMod.MyNode",
+        //            text: "Hello from Suzerain Modding Kit!",
+        //            parentID: 3,
+        //            nextID: 126,
+        //            speakerID: 4)));
+
+        LoggerInstance.Msg("Pre-initialization complete.");
+    }
+
+    public override void OnLateInitializeMelon()
+    {
+        ConversationRegistry.CloseRegistration();
+        LoggerInstance.Msg("Conversation registration closed.");
 
         LoggerInstance.Msg("Initialized.");
     }

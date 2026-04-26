@@ -492,9 +492,14 @@
 		<Compile Include="Save\Patches.cs" />
 		<Compile Include="Save\SaveManager.cs" />
 		<Compile Include="SmkInfo.cs" />
+		<Compile Include="StoryFragments\Conversation\ConversationInjection.cs" />
+		<Compile Include="StoryFragments\Conversation\ConversationInjector.cs" />
+		<Compile Include="StoryFragments\Conversation\ConversationNode.cs" />
+		<Compile Include="StoryFragments\Conversation\ConversationRegistry.cs" />
 		<Compile Include="StoryFragments\Conversation\Patches.cs" />
 		<Compile Include="StoryFragments\CustomBillData.cs" />
-		<Compile Include="Utils\ArticyIdGenerator.cs" />
+		<Compile Include="Utils\ArticyIDGenerator.cs" />
+		<Compile Include="Utils\DialogueActorFinder.cs" />
 		<Compile Include="Utils\Il2CppUtils.cs" />
 		<Compile Include="Variables.cs" />
 	</ItemGroup>

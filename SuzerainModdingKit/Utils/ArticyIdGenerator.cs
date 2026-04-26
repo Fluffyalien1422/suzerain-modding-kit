@@ -1,8 +1,8 @@
 namespace SuzerainModdingKit.Utils;
 
-internal static class ArticyIdGenerator
+internal static class ArticyIDGenerator
 {
-    public static string GenerateArticyId(string seed)
+    public static string GenerateArticyID(string seed)
     {
         ulong hash = 0x0FFFFFFF00000000UL;
         foreach (char c in seed)
