@@ -481,6 +481,8 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+		<Compile Include="Character\CharacterNameSelector.cs" />
+		<Compile Include="Character\CharacterSelector.cs" />
 		<Compile Include="DebugOverlay.cs" />
 		<Compile Include="Journal\CustomJournalEntryData.cs" />
 		<Compile Include="Journal\JournalManager.cs" />
@@ -495,11 +497,12 @@
 		<Compile Include="StoryFragments\Conversation\ConversationInjection.cs" />
 		<Compile Include="StoryFragments\Conversation\ConversationInjector.cs" />
 		<Compile Include="StoryFragments\Conversation\ConversationNode.cs" />
+		<Compile Include="StoryFragments\Conversation\NodeSelectors\ConversationNodeArticyIDSelector.cs" />
+		<Compile Include="StoryFragments\Conversation\NodeSelectors\ConversationNodeSelector.cs" />
 		<Compile Include="StoryFragments\Conversation\ConversationRegistry.cs" />
 		<Compile Include="StoryFragments\Conversation\Patches.cs" />
 		<Compile Include="StoryFragments\CustomBillData.cs" />
 		<Compile Include="Utils\ArticyIDGenerator.cs" />
-		<Compile Include="Utils\DialogueActorFinder.cs" />
 		<Compile Include="Utils\Il2CppUtils.cs" />
 		<Compile Include="Variables.cs" />
 	</ItemGroup>

@@ -32,19 +32,18 @@ internal sealed class Core : MelonMod
         LoggerInstance.Msg("Cleaning up mod saves.");
         SaveManager.CleanupOrphanedModSaves();
 
-        //TODO: functions to get node IDs from articy IDs, since node IDs can change with game updates.
         //TODO: multiple outgoing links from a node.
         //TODO: automatically chain injections from multiple mods together
         // so multiple mods can hook to the same parent node.
-        //TOOD: ability to reference another mod's node as parent or next
+        //TODO: node selector to reference another mod's node as parent or next
         //_ = ConversationRegistry.RegisterInjection(
         //    new ConversationInjection("Sordland/Turn02/Personal_Funeral")
         //        .AddNode(new ConversationNode(
         //            name: "TestMod.MyNode",
         //            text: "Hello from Suzerain Modding Kit!",
-        //            parentID: 3,
-        //            nextID: 126,
-        //            speakerID: 4)));
+        //            parentNodeSelector: new ConversationNodeArticyIDSelector("0x0100000400008561"),
+        //            nextNodeSelector: new ConversationNodeArticyIDSelector("0x01000003000545DC"),
+        //            speakerSelector: new CharacterNameSelector("Petr Vectern"))));
 
         LoggerInstance.Msg("Pre-initialization complete.");
     }

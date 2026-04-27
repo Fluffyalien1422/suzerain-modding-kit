@@ -1,3 +1,6 @@
+using SuzerainModdingKit.Character;
+using SuzerainModdingKit.StoryFragments.Conversation.NodeSelectors;
+
 namespace SuzerainModdingKit.StoryFragments.Conversation;
 
 public class ConversationNode
@@ -10,27 +13,34 @@ public class ConversationNode
     {
         get; init;
     }
-    public int ParentID
+    public ConversationNodeSelector ParentNodeSelector
     {
         get; init;
     }
-    public int NextID
+    public ConversationNodeSelector NextNodeSelector
     {
         get; init;
     }
-    public int? SpeakerID
+    public CharacterSelector SpeakerSelector
     {
         get; init;
     }
 
-    public bool IsChoice => SpeakerID == null;
+    public bool IsChoice => SpeakerSelector == null;
 
-    public ConversationNode(string name, string text, int parentID, int nextID, int? speakerID)
+    public ConversationNode(
+        string name,
+        string text,
+        ConversationNodeSelector parentNodeSelector,
+        ConversationNodeSelector nextNodeSelector,
+        CharacterSelector speakerSelector = null)
     {
         Name = name ?? throw new ArgumentNullException(nameof(name));
         Text = text ?? throw new ArgumentNullException(nameof(text));
-        ParentID = parentID;
-        NextID = nextID;
-        SpeakerID = speakerID;
+        ParentNodeSelector = parentNodeSelector
+            ?? throw new ArgumentNullException(nameof(parentNodeSelector));
+        NextNodeSelector = nextNodeSelector
+            ?? throw new ArgumentNullException(nameof(nextNodeSelector));
+        SpeakerSelector = speakerSelector;
     }
 }
