@@ -15,14 +15,16 @@ public class ConversationNodeArticyIDSelector : ConversationNodeSelector
         ArticyID = articyID ?? throw new ArgumentNullException(nameof(articyID));
     }
 
-    public override int? Resolve(DialogueConversation conversation)
+    public override DialogueEntry Resolve(
+        DialogueConversation conversation,
+        IReadOnlyList<InjectedNode> injectedNodes)
     {
         foreach (DialogueEntry entry in conversation.dialogueEntries)
         {
             string entryArticyID = Field.LookupValue(entry.fields, "Articy Id");
             if (entryArticyID.Equals(ArticyID, StringComparison.Ordinal))
             {
-                return entry.id;
+                return entry;
             }
         }
         return null;

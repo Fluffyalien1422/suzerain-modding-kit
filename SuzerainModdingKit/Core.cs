@@ -32,18 +32,32 @@ internal sealed class Core : MelonMod
         LoggerInstance.Msg("Cleaning up mod saves.");
         SaveManager.CleanupOrphanedModSaves();
 
-        //TODO: multiple outgoing links from a node.
         //TODO: automatically chain injections from multiple mods together
         // so multiple mods can hook to the same parent node.
-        //TODO: node selector to reference another mod's node as parent or next
+        //TODO: node conditions and scripts
+
         //_ = ConversationRegistry.RegisterInjection(
         //    new ConversationInjection("Sordland/Turn02/Personal_Funeral")
         //        .AddNode(new ConversationNode(
-        //            name: "TestMod.MyNode",
+        //            name: "TestMod.Hello",
         //            text: "Hello from Suzerain Modding Kit!",
-        //            parentNodeSelector: new ConversationNodeArticyIDSelector("0x0100000400008561"),
-        //            nextNodeSelector: new ConversationNodeArticyIDSelector("0x01000003000545DC"),
-        //            speakerSelector: new CharacterNameSelector("Petr Vectern"))));
+        //            hookSelectors: [new ConversationNodeArticyIDSelector("0x0100000400008561")],
+        //            // nextNodeSelectors is omitted because the nodes below are hooked to this one
+        //            // so nextNodeSelectors is not necessary.
+        //            speakerSelector: new CharacterNameSelector("Petr Vectern")))
+        //        // if speakerSelector is omitted or set to null (speakerSelector: null)
+        //        // then the node will be listed as a choice instead of a line of dialogue.
+        //        // the following are choices because they omit speakerSelector.
+        //        .AddNode(new ConversationNode(
+        //            name: "TestMod.Hello2",
+        //            text: "Hey Petr!",
+        //            hookSelectors: [new ConversationNodeModdedNameSelector("TestMod.Hello")],
+        //            nextNodeSelectors: [new ConversationNodeArticyIDSelector("0x01000003000545DC")]))
+        //        .AddNode(new ConversationNode(
+        //            name: "TestMod.Hello3",
+        //            text: "Hello Petr.",
+        //            hookSelectors: [new ConversationNodeModdedNameSelector("TestMod.Hello")],
+        //            nextNodeSelectors: [new ConversationNodeArticyIDSelector("0x01000003000545DC")])));
 
         LoggerInstance.Msg("Pre-initialization complete.");
     }

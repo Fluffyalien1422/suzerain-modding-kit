@@ -1,5 +1,7 @@
+using System.Globalization;
 using Il2CppPixelCrushers.DialogueSystem;
 using MelonLoader;
+using SuzerainModdingKit.StoryFragments.Conversation.NodeSelectors;
 using SuzerainModdingKit.Utils;
 using DialogueConversation = Il2CppPixelCrushers.DialogueSystem.Conversation;
 
@@ -9,40 +11,94 @@ internal static class ConversationInjector
 {
     private static readonly List<string> _conversationsInjected = [];
 
-    private static void InjectNode(ConversationNode node, DialogueConversation conversation)
+    private static void CreateNodeLinks(InjectedNode node, IReadOnlyList<InjectedNode> nodes)
     {
-        int? parentIDNullable = node.ParentNodeSelector.Resolve(conversation);
-        if (parentIDNullable == null)
+        List<DialogueEntry> hookedEntries = [];
+        for (int i = 0; i < node.Node.HookSelectors.Count; i++)
         {
-            Melon<Core>.Logger.Error($"Failed to inject conversation node '{node.Name}': " +
-                "Parent node could not be resolved.");
-            return;
+            ConversationNodeSelector selector = node.Node.HookSelectors[i];
+            DialogueEntry entry = selector.Resolve(node.Conversation, nodes);
+            if (entry == null)
+            {
+                Melon<Core>.Logger.Warning("Failed to resolve hook " +
+                    $"{i.ToString(CultureInfo.InvariantCulture)} for '{node.Node.Name}'.");
+                continue;
+            }
+            hookedEntries.Add(entry);
         }
-        int parentID = (int)parentIDNullable;
 
-        int? nextIDNullable = node.NextNodeSelector.Resolve(conversation);
-        if (nextIDNullable == null)
+        List<int> nextEntryIDs = [];
+        for (int i = 0; i < node.Node.NextNodeSelectors.Count; i++)
         {
-            Melon<Core>.Logger.Error($"Failed to inject conversation node '{node.Name}': " +
-                "Next node could not be resolved.");
-            return;
+            ConversationNodeSelector selector = node.Node.NextNodeSelectors[i];
+            DialogueEntry entry = selector.Resolve(node.Conversation, nodes);
+            if (entry == null)
+            {
+                Melon<Core>.Logger.Warning("Failed to resolve next node " +
+                    $"{i.ToString(CultureInfo.InvariantCulture)} for '{node.Node.Name}'.");
+                continue;
+            }
+            nextEntryIDs.Add(entry.id);
         }
-        int nextID = (int)nextIDNullable;
 
+        foreach (int nextID in nextEntryIDs)
+        {
+            Func<Link, bool> exists = (link) => link.destinationDialogueID == nextID;
+            bool linkExists = node.Entry.outgoingLinks.Exists(exists);
+            if (linkExists)
+            {
+                Melon<Core>.Logger.Warning("Found duplicate outgoing links " +
+                    $"from node '{node.Node.Name}'.");
+                continue;
+            }
+
+            Link nextLink = new(
+                node.Conversation.id, node.Entry.id,
+                node.Conversation.id, nextID);
+            node.Entry.outgoingLinks.Add(nextLink);
+        }
+
+        foreach (DialogueEntry parent in hookedEntries)
+        {
+            Func<Link, bool> exists = (link) => link.destinationDialogueID == node.Entry.id;
+            bool linkExists = parent.outgoingLinks.Exists(exists);
+            if (linkExists)
+            {
+                Melon<Core>.Logger.Warning("Found duplicate incoming links " +
+                    $"to node '{node.Node.Name}'.");
+                continue;
+            }
+
+            Link parentToNewEntryLink = new(
+                node.Conversation.id, parent.id,
+                node.Conversation.id, node.Entry.id)
+            {
+                // Set priority to high to ensure that injected nodes take priority over vanilla nodes.
+                // For dialogue lines, Dialogue System only chooses the first valid link with the
+                // highest priority, so this ensures that injected dialogue lines will be chosen over
+                // vanilla ones. For choice nodes, all links will be shown, so this doesn't matter.
+                priority = ConditionPriority.High,
+            };
+            parent.outgoingLinks.Add(parentToNewEntryLink);
+        }
+    }
+
+    private static void LinkInjectedNodes(List<InjectedNode> nodes)
+    {
+        foreach (InjectedNode node in nodes)
+        {
+            CreateNodeLinks(node, nodes);
+        }
+    }
+
+    private static InjectedNode InjectNode(ConversationNode node, DialogueConversation conversation)
+    {
         int? speakerID = node.SpeakerSelector?.Resolve();
         if (speakerID == null && !node.IsChoice)
         {
             Melon<Core>.Logger.Error($"Failed to inject conversation node '{node.Name}': " +
                 "Speaker character could not be resolved.");
-            return;
-        }
-
-        DialogueEntry parent = conversation.GetDialogueEntry(parentID);
-        if (parent == null)
-        {
-            Melon<Core>.Logger.Error($"Failed to inject conversation node '{node.Name}': " +
-                $"Parent node could not be found in conversation '{conversation.Title}'.");
-            return;
+            return null;
         }
 
         Template template = Template.FromDefault();
@@ -69,34 +125,9 @@ internal static class ConversationInjector
             newEntry.ConversantID = conversation.ActorID;
         }
 
-        Link nextLink = new(
-            conversation.id, newID,
-            conversation.id, nextID);
-        newEntry.outgoingLinks.Add(nextLink);
-
         conversation.dialogueEntries.Add(newEntry);
 
-        Link parentToNewEntryLink = new(
-            conversation.id, parentID,
-            conversation.id, newID)
-        {
-            // Set priority to high to ensure that injected nodes take priority over vanilla nodes.
-            // For dialogue lines, Dialogue System only chooses the first valid link with the
-            // highest priority, so this ensures that injected dialogue lines will be chosen over
-            // vanilla ones. For choice nodes, all links will be shown, so this doesn't matter.
-            priority = ConditionPriority.High,
-        };
-        parent.outgoingLinks.Add(parentToNewEntryLink);
-    }
-
-    private static void LoadInjection(
-        ConversationInjection injection,
-        DialogueConversation conversation)
-    {
-        foreach (ConversationNode node in injection.Nodes)
-        {
-            InjectNode(node, conversation);
-        }
+        return new InjectedNode(node, newEntry, conversation);
     }
 
     public static void LoadInjections(DialogueConversation conversation)
@@ -107,12 +138,24 @@ internal static class ConversationInjector
         }
         _conversationsInjected.Add(conversation.Title);
 
+        List<InjectedNode> injectedNodes = [];
         foreach (ConversationInjection injection in ConversationRegistry.Injections)
         {
-            if (injection.ConversationTitle.Equals(conversation.Title, StringComparison.Ordinal))
+            if (!injection.ConversationTitle.Equals(conversation.Title, StringComparison.Ordinal))
             {
-                LoadInjection(injection, conversation);
+                continue;
+            }
+
+            foreach (ConversationNode node in injection.Nodes)
+            {
+                InjectedNode injected = InjectNode(node, conversation);
+                if (injected != null)
+                {
+                    injectedNodes.Add(injected);
+                }
             }
         }
+
+        LinkInjectedNodes(injectedNodes);
     }
 }
