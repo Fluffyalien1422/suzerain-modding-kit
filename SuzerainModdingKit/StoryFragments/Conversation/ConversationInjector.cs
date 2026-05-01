@@ -11,66 +11,109 @@ internal static class ConversationInjector
 {
     private static readonly List<string> _conversationsInjected = [];
 
-    private static void CreateNodeLinks(InjectedNode node, IReadOnlyList<InjectedNode> nodes)
+    private static List<DialogueEntry> FindFinalNodes(DialogueEntry originEntry)
     {
-        List<DialogueEntry> hookedEntries = [];
-        for (int i = 0; i < node.Node.HookSelectors.Count; i++)
+        DialogueDatabase db = DialogueManager.MasterDatabase;
+
+        Stack<DialogueEntry> stack = new();
+        List<DialogueEntry> finalNodes = [];
+        stack.Push(originEntry);
+
+        while (stack.Count > 0)
         {
-            ConversationNodeSelector selector = node.Node.HookSelectors[i];
+            DialogueEntry entry = stack.Pop();
+            if (entry.outgoingLinks.Count == 0)
+            {
+                finalNodes.Add(entry);
+                continue;
+            }
+            foreach (Link link in entry.outgoingLinks)
+            {
+                DialogueConversation nextConversation =
+                    db.GetConversation(link.destinationConversationID);
+                if (nextConversation == null)
+                {
+                    continue;
+                }
+                DialogueEntry nextEntry =
+                    nextConversation.GetDialogueEntry(link.destinationDialogueID);
+                stack.Push(nextEntry);
+            }
+        }
+
+        return finalNodes;
+    }
+
+    private static void HookNode(
+        InjectedNode node,
+        DialogueEntry parent,
+        ConversationNodeHook hook)
+    {
+        Link link = new(
+            node.Conversation.id, parent.id,
+            node.Conversation.id, node.Entry.id)
+        {
+            priority = hook.ConditionPriority,
+        };
+
+        // ConditionGated: Choose the first (sorted by priority) outgoing link with a successful
+        // condition. This is the default behavior of Dialogue System, so just add it to the
+        // outgoingLinks and let Dialogue System handle it.
+        if (hook.Mode == ConversationNodeHook.HookMode.ConditionGated)
+        {
+            parent.outgoingLinks.Add(link);
+            return;
+        }
+        // Override: Delete all other outgoing links and add this one.
+        if (hook.Mode == ConversationNodeHook.HookMode.Override)
+        {
+            parent.outgoingLinks.Clear();
+            parent.outgoingLinks.Add(link);
+            return;
+        }
+
+        // Split: Break the chain at this point and insert this node in-between.
+
+        // Copy the parent's outgoing links to each of the final nodes in this chain.
+        List<DialogueEntry> finalNodes = FindFinalNodes(node.Entry);
+        foreach (DialogueEntry finalEntry in finalNodes)
+        {
+            foreach (Link parentLink in parent.outgoingLinks)
+            {
+                finalEntry.outgoingLinks.Add(parentLink);
+            }
+        }
+
+        parent.outgoingLinks.Clear();
+        parent.outgoingLinks.Add(link);
+    }
+
+    private static void HookNodes(InjectedNode node, IReadOnlyList<InjectedNode> nodes)
+    {
+        for (int i = 0; i < node.Node.Hooks.Count; i++)
+        {
+            ConversationNodeHook hook = node.Node.Hooks[i];
+            ConversationNodeSelector selector = hook.Selector;
             DialogueEntry entry = selector.Resolve(node.Conversation, nodes);
             if (entry == null)
             {
                 Melon<Core>.Logger.Warning("Failed to resolve hook " +
-                    $"{i.ToString(CultureInfo.InvariantCulture)} for '{node.Node.Name}'.");
-                continue;
-            }
-            hookedEntries.Add(entry);
-        }
-
-        List<int> nextEntryIDs = [];
-        for (int i = 0; i < node.Node.NextNodeSelectors.Count; i++)
-        {
-            ConversationNodeSelector selector = node.Node.NextNodeSelectors[i];
-            DialogueEntry entry = selector.Resolve(node.Conversation, nodes);
-            if (entry == null)
-            {
-                Melon<Core>.Logger.Warning("Failed to resolve next node " +
-                    $"{i.ToString(CultureInfo.InvariantCulture)} for '{node.Node.Name}'.");
-                continue;
-            }
-            nextEntryIDs.Add(entry.id);
-        }
-
-        foreach (int nextID in nextEntryIDs)
-        {
-            Func<Link, bool> exists = (link) => link.destinationDialogueID == nextID;
-            bool linkExists = node.Entry.outgoingLinks.Exists(exists);
-            if (linkExists)
-            {
-                Melon<Core>.Logger.Warning("Found duplicate outgoing links " +
-                    $"from node '{node.Node.Name}'.");
+                    $"{i.ToString(CultureInfo.InvariantCulture)} for conversation node " +
+                    $"'{node.Node.Name}'.");
                 continue;
             }
 
-            Link nextLink = new(
-                node.Conversation.id, node.Entry.id,
-                node.Conversation.id, nextID);
-            node.Entry.outgoingLinks.Add(nextLink);
-        }
-
-        foreach (DialogueEntry parent in hookedEntries)
-        {
             Func<Link, bool> exists = (link) => link.destinationDialogueID == node.Entry.id;
-            bool linkExists = parent.outgoingLinks.Exists(exists);
+            bool linkExists = entry.outgoingLinks.Exists(exists);
             if (linkExists)
             {
                 Melon<Core>.Logger.Warning("Found duplicate incoming links " +
-                    $"to node '{node.Node.Name}'.");
+                    $"to conversation node '{node.Node.Name}'.");
                 continue;
             }
 
             Link parentToNewEntryLink = new(
-                node.Conversation.id, parent.id,
+                node.Conversation.id, entry.id,
                 node.Conversation.id, node.Entry.id)
             {
                 // Set priority to high to ensure that injected nodes take priority over vanilla nodes.
@@ -79,7 +122,37 @@ internal static class ConversationInjector
                 // vanilla ones. For choice nodes, all links will be shown, so this doesn't matter.
                 priority = ConditionPriority.High,
             };
-            parent.outgoingLinks.Add(parentToNewEntryLink);
+            entry.outgoingLinks.Add(parentToNewEntryLink);
+        }
+    }
+
+    private static void CreateNodeOutgoingLinks(InjectedNode node, IReadOnlyList<InjectedNode> nodes)
+    {
+        for (int i = 0; i < node.Node.NextNodes.Count; i++)
+        {
+            ConversationNodeSelector selector = node.Node.NextNodes[i];
+            DialogueEntry entry = selector.Resolve(node.Conversation, nodes);
+            if (entry == null)
+            {
+                Melon<Core>.Logger.Warning("Failed to resolve next node " +
+                    $"{i.ToString(CultureInfo.InvariantCulture)} for conversation node " +
+                    $"'{node.Node.Name}'.");
+                continue;
+            }
+
+            Func<Link, bool> exists = (link) => link.destinationDialogueID == entry.id;
+            bool linkExists = node.Entry.outgoingLinks.Exists(exists);
+            if (linkExists)
+            {
+                Melon<Core>.Logger.Warning("Found duplicate outgoing links " +
+                    $"from conversation node '{node.Node.Name}'.");
+                continue;
+            }
+
+            Link nextLink = new(
+                node.Conversation.id, node.Entry.id,
+                node.Conversation.id, entry.id);
+            node.Entry.outgoingLinks.Add(nextLink);
         }
     }
 
@@ -87,7 +160,12 @@ internal static class ConversationInjector
     {
         foreach (InjectedNode node in nodes)
         {
-            CreateNodeLinks(node, nodes);
+            CreateNodeOutgoingLinks(node, nodes);
+        }
+        // All the outgoing links have to be created before we can create hooks.
+        foreach (InjectedNode node in nodes)
+        {
+            HookNodes(node, nodes);
         }
     }
 
