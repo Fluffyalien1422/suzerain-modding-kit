@@ -31,7 +31,8 @@ Coding guidelines for contributing to Suzerain Modding Kit.
 
 - Patch classes should be the patched class name, the patched method name, and the name of the patch (in `PascalCase`) or `Patch`, separated by underscores. For example: `ClassName_MethodName_Patch`, `ClassName_MethodName_PatchThatDoesSomethingSpecific`.
 - Multiple patch classes may be contained in one file.
-- Patch files should generally live next to their target (eg. `Events.cs` and `EventsPatches.cs`, `Conversation\*.cs` files and `Conversation\Patches.cs`)
+- Patch files should generally live next to their target (eg. `Events.cs` and `EventsPatches.cs`, `Conversation\*.cs` files and `Conversation\Patches.cs`).
+- Prefer using `Postfix` over `Prefix`.
 
 ## Error Handling
 
