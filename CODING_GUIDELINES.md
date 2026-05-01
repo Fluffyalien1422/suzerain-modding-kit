@@ -1,6 +1,37 @@
 # Coding Guidelines
 
-Coding guidelines for contributing to Suzerain Modding Kit. **These guidelines are not complete yet.**
+Coding guidelines for contributing to Suzerain Modding Kit.
+
+## General Naming Conventions
+
+- Private properties: `_underscorePrefixedCamelCase`.
+- Local variables: `camelCase`.
+- Everything else: `PascalCase`.
+- Prefix interfaces with `I`.
+
+## Variables
+
+- Avoid using `var`, use explicit type names instead.
+
+## Type Design
+
+- Apply the most restrictive access modifiers for a feature to work.
+    - Members within an `internal` class may use `public` instead of `internal`. They will be `internal` regardless of whether `public`/`internal` is specified because the class is `internal`.
+- `internal` classes that are not inherited from should always be `sealed`.
+- `public` classes should not be `sealed` unless necessary.
+- Avoid exposing mutable public fields.
+
+## File and Namespace Structure
+
+- There should be one type per file, and the type should have the same name as the file.
+    - **Except for patches.** A file containing patches may have multiple patch classes, and the name of the file may be different.
+- Namespaces should match folder hierarchy.
+
+## Patches
+
+- Patch classes should be the patched class name, the patched method name, and the name of the patch (in `PascalCase`) or `Patch`, separated by underscores. For example: `ClassName_MethodName_Patch`, `ClassName_MethodName_PatchThatDoesSomethingSpecific`.
+- Multiple patch classes may be contained in one file.
+- Patch files should generally live next to their target (eg. `Events.cs` and `EventsPatches.cs`, `Conversation\*.cs` files and `Conversation\Patches.cs`)
 
 ## Error Handling
 
