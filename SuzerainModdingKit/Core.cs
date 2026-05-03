@@ -43,17 +43,22 @@ internal sealed class Core : MelonMod
         //            hooks: [
         //                new ConversationNodeHook(
         //                    selector: new ConversationNodeArticyIDSelector("0x0100000400008561")),
-        //            ],
-        //            nextNodes: [
-        //                new ConversationNodeModdedNameSelector("TestMod.Hello2"),
-        //                new ConversationNodeModdedNameSelector("TestMod.Hello3"),
         //            ]))
         //        .AddNode(new ConversationNode(
         //            name: "TestMod.Hello2",
-        //            text: "Hey Petr!"))
+        //            text: "Hey Petr!",
+        //            hooks: [
+        //                new ConversationNodeHook(
+        //                    priority: ConversationNodeHook.HookPriority.High,
+        //                    selector: new ConversationNodeModdedNameSelector("TestMod.Hello")),
+        //            ]))
         //        .AddNode(new ConversationNode(
         //            name: "TestMod.Hello3",
-        //            text: "Hello Petr.")));
+        //            text: "Hello Petr.",
+        //            hooks: [
+        //                new ConversationNodeHook(
+        //                    selector: new ConversationNodeModdedNameSelector("TestMod.Hello")),
+        //            ])));
 
         LoggerInstance.Msg("Pre-initialization complete.");
     }

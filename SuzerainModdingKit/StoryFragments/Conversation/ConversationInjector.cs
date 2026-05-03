@@ -11,15 +11,15 @@ internal static class ConversationInjector
 {
     private static readonly List<string> _conversationsInjected = [];
 
-    //TODO: what if a node has a circular reference?
-    //TODO: what if there is a stack overflow?
-    private static List<DialogueEntry> FindFinalNodes(DialogueEntry originEntry)
+    private static List<DialogueEntry> FindFinalNodes(
+        DialogueEntry originEntry,
+        DialogueConversation conversation,
+        IReadOnlyList<int> parentNextIDs)
     {
-        DialogueDatabase db = DialogueManager.MasterDatabase;
-
         Stack<DialogueEntry> stack = new();
-        List<DialogueEntry> finalNodes = [];
         stack.Push(originEntry);
+        List<DialogueEntry> finalNodes = [];
+        HashSet<int> vistedEntryIDs = [.. parentNextIDs];
 
         while (stack.Count > 0)
         {
@@ -31,14 +31,19 @@ internal static class ConversationInjector
             }
             foreach (Link link in entry.outgoingLinks)
             {
-                DialogueConversation nextConversation =
-                    db.GetConversation(link.destinationConversationID);
-                if (nextConversation == null)
+                int nextID = link.destinationDialogueID;
+                if (vistedEntryIDs.Contains(nextID))
                 {
+                    // Ignore circular references.
                     continue;
                 }
-                DialogueEntry nextEntry =
-                    nextConversation.GetDialogueEntry(link.destinationDialogueID);
+                vistedEntryIDs.Add(nextID);
+                DialogueEntry nextEntry = conversation.GetDialogueEntry(nextID);
+                if (nextEntry == null)
+                {
+                    // Ignore null references.
+                    continue;
+                }
                 stack.Push(nextEntry);
             }
         }
@@ -79,13 +84,24 @@ internal static class ConversationInjector
 
         // Split: Break the chain at this point and insert this node in-between.
 
-        // Copy the parent's outgoing links to each of the final nodes in this chain.
-        List<DialogueEntry> finalNodes = FindFinalNodes(node.Entry);
+        List<int> parentNextIDs = [];
+        foreach (Link parentLink in parent.outgoingLinks)
+        {
+            parentNextIDs.Add(parentLink.destinationDialogueID);
+        }
+
+        List<DialogueEntry> finalNodes = FindFinalNodes(
+            node.Entry,
+            node.Conversation,
+            parentNextIDs);
+
         foreach (DialogueEntry finalEntry in finalNodes)
         {
-            foreach (Link parentLink in parent.outgoingLinks)
+            foreach (int nextID in parentNextIDs)
             {
-                finalEntry.outgoingLinks.Add(parentLink);
+                finalEntry.outgoingLinks.Add(new Link(
+                    node.Conversation.id, finalEntry.id,
+                    node.Conversation.id, nextID));
             }
         }
 
@@ -95,7 +111,9 @@ internal static class ConversationInjector
         parent.outgoingLinks.Add(link);
     }
 
-    private static void CreateNodeOutgoingLinks(InjectedConversationNode node, IReadOnlyList<InjectedConversationNode> nodes)
+    private static void CreateNodeOutgoingLinks(
+        InjectedConversationNode node,
+        IReadOnlyList<InjectedConversationNode> nodes)
     {
         for (int i = 0; i < node.Node.NextNodes.Count; i++)
         {
@@ -125,7 +143,8 @@ internal static class ConversationInjector
         }
     }
 
-    private static List<ResolvedConversationNodeHook> ResolveHooks(IReadOnlyList<InjectedConversationNode> nodes)
+    private static List<ResolvedConversationNodeHook> ResolveHooks(
+        IReadOnlyList<InjectedConversationNode> nodes)
     {
         List<ResolvedConversationNodeHook> resolvedHooks = [];
         foreach (InjectedConversationNode node in nodes)
@@ -152,6 +171,7 @@ internal static class ConversationInjector
                         "duplicate hooks.");
                     continue;
                 }
+                resolvedParentIDs.Add(entry.id);
 
                 // Check if the parent already has a link to this node.
                 Func<Link, bool> exists = (link) => link.destinationDialogueID == node.Entry.id;
@@ -163,7 +183,6 @@ internal static class ConversationInjector
                     continue;
                 }
 
-                resolvedParentIDs.Add(entry.id);
                 ResolvedConversationNodeHook resolved = new(hook, node, entry);
                 resolvedHooks.Add(resolved);
             }
@@ -189,7 +208,9 @@ internal static class ConversationInjector
         }
     }
 
-    private static InjectedConversationNode InjectNode(ConversationNode node, DialogueConversation conversation)
+    private static InjectedConversationNode InjectNode(
+        ConversationNode node,
+        DialogueConversation conversation)
     {
         int? speakerID = node.SpeakerSelector?.Resolve();
         if (speakerID == null && !node.IsChoice)
