@@ -2,12 +2,17 @@
 
 Coding guidelines for contributing to Suzerain Modding Kit.
 
+## Formatting
+
+- Lines should not exceed 100 characters in length. If you're using Visual Studio, you can use the [Editor Guidelines](https://marketplace.visualstudio.com/items?itemName=PaulHarrington.EditorGuidelinesPreview) extension to set a guideline at 100 characters.
+
 ## General Naming Conventions
 
 - Private properties: `_underscorePrefixedCamelCase`.
-- Local variables: `camelCase`.
+- Local variables and parameters: `camelCase`.
 - Everything else: `PascalCase`.
 - Prefix interfaces with `I`.
+- Treat acronyms as whole words unless they are two letters in length (eg. `SmkInfo`, not `SMKInfo` and `ArticyID`, not `ArticyId`).
 
 ## Variables
 
@@ -36,8 +41,8 @@ Coding guidelines for contributing to Suzerain Modding Kit.
 
 ## Error Handling
 
-- **Internal error handling:** _Suzerain Modding Kit failures are not the responsibility of the consumer._ Errors which are the result of a failure of Suzerain Modding Kit should be handled. An error or warning message should be logged instead of throwing an exception.
+- **Internal error handling:** Errors which are the result of a failure of Suzerain Modding Kit should be handled. An error or warning message should be logged instead of throwing an exception.
     - If the error is in an API method, the method should return a flag indicating to the caller that the method failed (usually `false` or `null`).
 - **User error handling:** Errors which are caused by the consumers of the API should throw (eg. throw `ArgumentNullExceptions` and other user errors).
-- **Avoiding corrupted state:** _An error caused by one mod should not affect other mods._ Avoid creating corrupted state (eg. halfway registering a custom story fragment) when an error occurs. Validate before performing the action so the method doesn't terminate halfway through the action. If something can't be validated beforehand, use default values or roll back the state before terminating.
+- **Avoiding corrupted state:** Avoid creating corrupted state (eg. halfway registering a custom story fragment) when an error occurs. Validate before performing the action so the method doesn't terminate halfway through the action. If something can't be validated beforehand, use default values or roll back the state before terminating.
 
