@@ -1,16 +1,44 @@
 namespace SuzerainModdingKit;
 
+/// <summary>
+/// Suzerain lifecycle events.
+/// </summary>
 public static class Events
 {
+    /// <summary>
+    /// Called when a step is evaluated. Note that this may be called multiple times per step.
+    /// </summary>
     public static event EventHandler OnEvaluateStep;
+    /// <summary>
+    /// Called when a step ends.
+    /// </summary>
     public static event EventHandler OnStepEnd;
+    /// <summary>
+    /// Called when a turn ends.
+    /// </summary>
     public static event EventHandler OnTurnEnd;
+    /// <summary>
+    /// Called when a bill is signed by the player.
+    /// </summary>
     public static event EventHandler<BillEventArgs> OnBillSigned;
+    /// <summary>
+    /// Called when a bill is vetoed by the player.
+    /// </summary>
     public static event EventHandler<BillEventArgs> OnBillVetoed;
+    /// <summary>
+    /// Called when the journal is initialized. Note that this may be called multiple times.
+    /// </summary>
     public static event EventHandler OnJournalInitialized;
 
+    /// <summary>
+    /// Event args passed to <c cref="OnBillSigned">OnBillSigned</c> and
+    /// <c cref="OnBillVetoed">OnBillVetoed</c> events.
+    /// </summary>
     public class BillEventArgs : EventArgs
     {
+        /// <summary>
+        /// The name of the bill.
+        /// </summary>
         public string BillName
         {
             get; init;

@@ -4,31 +4,72 @@ using SuzerainModdingKit.StoryFragments;
 
 namespace SuzerainModdingKit;
 
+/// <summary>
+/// Static interface for querying and modifying the current state of the game.
+/// </summary>
 public static class GameState
 {
+    /// <summary>
+    /// The current step number.
+    /// </summary>
     public static int? CurrentStepNum => Managers.Instance?.GameFlowManager?.CurrentStepNo;
+    /// <summary>
+    /// The current step name (eg. "Sordland_Turn_2_Step_3").
+    /// </summary>
     public static string CurrentStepName => Managers.Instance?.GameFlowManager?.currentStepData
         ?.NameInDatabase;
+    /// <summary>
+    /// The current turn number.
+    /// </summary>
     public static int? CurrentTurnNum => Managers.Instance?.GameFlowManager?.CurrentTurnNo;
+    /// <summary>
+    /// The current turn name (eg. "Sordland_Turn_2").
+    /// </summary>
     public static string CurrentTurnName => Managers.Instance?.GameFlowManager?.currentTurnData
         ?.NameInDatabase;
 
+    /// <summary>
+    /// Check if the game is active. The game is "active" when the current step is not null.
+    /// </summary>
+    /// <returns>
+    /// A boolean indicating whether the game is active.
+    /// </returns>
     public static bool IsGameActive()
     {
         return CurrentStepName != null;
     }
 
+    /// <summary>
+    /// Check if a story fragment exists in the current step.
+    /// </summary>
+    /// <param name="name">
+    /// The name of the story fragment.
+    /// </param>
+    /// <returns>
+    /// A boolean indicating whether the story fragment exists in the current step.
+    /// </returns>
     public static bool StoryFragmentExistsInCurrentStep(string name)
     {
         return Managers.Instance?.GameFlowManager?.currentStepData?.StoryFragments?.Contains(name)
             ?? false;
     }
 
+    /// <summary>
+    /// Add a custom bill to the current step.
+    /// </summary>
+    /// <param name="customBillData">
+    /// The custom bill data.
+    /// </param>
+    /// <exception cref="InvalidOperationException">
+    /// Thrown if the game is not active.
+    /// </exception>
     public static void AddCustomBill(CustomBillData customBillData)
     {
         // This method adds a custom bill to the current step dynamically.
         // We don't use Suzerain's registry because articy:expresso scripts
         // don't recognize custom variables.
+
+        ArgumentNullException.ThrowIfNull(customBillData);
 
         if (!IsGameActive())
         {
@@ -39,7 +80,8 @@ public static class GameState
         if (StoryFragmentExistsInCurrentStep(customBillData.Name))
         {
             throw new InvalidOperationException(
-                $"A story fragment with the name '{customBillData.Name}' already exists in the current step.");
+                $"A story fragment with the name '{customBillData.Name}' already exists in the " +
+                "current step.");
         }
 
         GameFlowManager gameFlowManager = Managers.Instance.GameFlowManager;
@@ -114,7 +156,8 @@ public static class GameState
         if (indicatorTemplate == null)
         {
             Melon<Core>.Logger.Error(
-                $"Failed to create token indicator for token '{assignedTokenName}'. No template object found.");
+                $"Failed to create token indicator for token '{assignedTokenName}'. No template " +
+                "object found.");
             return;
         }
 

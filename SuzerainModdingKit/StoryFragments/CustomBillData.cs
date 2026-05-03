@@ -3,33 +3,80 @@ using SuzerainModdingKit.Utils;
 
 namespace SuzerainModdingKit.StoryFragments;
 
+/// <summary>
+/// Represents the data required to define a custom bill story fragment for injection
+/// into the game.
+/// </summary>
+/// <seealso cref="GameState.AddCustomBill"/>
 public class CustomBillData
 {
+    /// <summary>
+    /// The unique identifier of the bill.
+    /// </summary>
     public string Name
     {
         get; init;
     }
+    /// <summary>
+    /// The name of the token this story fragment should appear on (eg. "Sordland_City_Holsord").
+    /// </summary>
     public string AssignedTokenName
     {
         get; init;
     }
+    /// <summary>
+    /// The full title of the bill shown in the bill panel.
+    /// </summary>
     public string Title
     {
         get; init;
     }
+    /// <summary>
+    /// The full description of the bill shown in the bill panel.
+    /// </summary>
     public string Description
     {
         get; init;
     }
+    /// <summary>
+    /// The short title of the bill shown under the assigned token.
+    /// </summary>
     public string HubTitle
     {
         get; init;
     }
+    /// <summary>
+    /// The short description of the bill shown under the assigned token.
+    /// </summary>
     public string HubDescription
     {
         get; init;
     }
 
+    /// <summary>
+    /// Creates a new instance of this class.
+    /// </summary>
+    /// <param name="name">
+    /// The unique identifier of the bill.
+    /// </param>
+    /// <param name="assignedTokenName">
+    /// The name of the token this story fragment should appear on (eg. "Sordland_City_Holsord").
+    /// </param>
+    /// <param name="title">
+    /// The full title of the bill shown in the bill panel.
+    /// </param>
+    /// <param name="description">
+    /// The full description of the bill shown in the bill panel.
+    /// </param>
+    /// <param name="hubTitle">
+    /// The short title of the bill shown under the assigned token.
+    /// </param>
+    /// <param name="hubDescription">
+    /// The short description of the bill shown under the assigned token.
+    /// </param>
+    /// <exception cref="ArgumentNullException">
+    /// Thrown if any required arguments are null.
+    /// </exception>
     public CustomBillData(
         string name,
         string assignedTokenName,

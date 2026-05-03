@@ -165,13 +165,13 @@ internal static class SaveManager
         {
             case JsonValueKind.True:
             case JsonValueKind.False:
-                Variables.Set(variableName, value.GetBoolean());
+                _ = Variables.Set(variableName, value.GetBoolean());
                 break;
             case JsonValueKind.String:
-                Variables.Set(variableName, value.GetString());
+                _ = Variables.Set(variableName, value.GetString());
                 break;
             case JsonValueKind.Number:
-                Variables.Set(variableName, value.GetSingle());
+                _ = Variables.Set(variableName, value.GetSingle());
                 break;
             case JsonValueKind.Undefined:
             case JsonValueKind.Object:

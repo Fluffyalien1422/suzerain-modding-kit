@@ -1,3 +1,4 @@
+using System.Collections.ObjectModel;
 using System.Globalization;
 using Il2CppPixelCrushers.DialogueSystem;
 using MelonLoader;
@@ -9,7 +10,7 @@ namespace SuzerainModdingKit.StoryFragments.Conversation;
 
 internal static class ConversationInjector
 {
-    private static readonly List<string> _conversationsInjected = [];
+    private static readonly HashSet<string> _conversationsInjected = [];
 
     private static List<DialogueEntry> FindFinalNodes(
         DialogueEntry originEntry,
@@ -113,7 +114,7 @@ internal static class ConversationInjector
 
     private static void CreateNodeOutgoingLinks(
         InjectedConversationNode node,
-        IReadOnlyList<InjectedConversationNode> nodes)
+        IReadOnlyCollection<InjectedConversationNode> nodes)
     {
         for (int i = 0; i < node.Node.NextNodes.Count; i++)
         {
@@ -144,7 +145,7 @@ internal static class ConversationInjector
     }
 
     private static List<ResolvedConversationNodeHook> ResolveHooks(
-        IReadOnlyList<InjectedConversationNode> nodes)
+        IReadOnlyCollection<InjectedConversationNode> nodes)
     {
         List<ResolvedConversationNodeHook> resolvedHooks = [];
         foreach (InjectedConversationNode node in nodes)
@@ -190,7 +191,7 @@ internal static class ConversationInjector
         return resolvedHooks;
     }
 
-    private static void LinkInjectedNodes(IReadOnlyList<InjectedConversationNode> nodes)
+    private static void LinkInjectedNodes(IReadOnlyCollection<InjectedConversationNode> nodes)
     {
         // Create the outgoing links first. All the outgoing links have to be created before
         // we can create hooks.
@@ -275,6 +276,6 @@ internal static class ConversationInjector
             }
         }
 
-        LinkInjectedNodes(injectedNodes);
+        LinkInjectedNodes(new ReadOnlyCollection<InjectedConversationNode>(injectedNodes));
     }
 }

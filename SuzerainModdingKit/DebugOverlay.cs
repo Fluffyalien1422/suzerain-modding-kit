@@ -227,7 +227,7 @@ internal static class DebugOverlay
             {
                 if (bool.TryParse(_newValue, out bool boolValue))
                 {
-                    Variables.Set(VariableName, boolValue);
+                    _ = Variables.Set(VariableName, boolValue);
                     _resultMessage = $"'{VariableName}' set to {boolValue}.";
                 }
                 else
@@ -240,7 +240,7 @@ internal static class DebugOverlay
                 if (float.TryParse(_newValue, NumberStyles.Float, CultureInfo.InvariantCulture,
                     out float floatValue))
                 {
-                    Variables.Set(VariableName, floatValue);
+                    _ = Variables.Set(VariableName, floatValue);
                     _resultMessage = $"'{VariableName}' set to {floatValue
                         .ToString(CultureInfo.InvariantCulture)}.";
                 }
@@ -251,7 +251,7 @@ internal static class DebugOverlay
             }
             if (GUILayout.Button("Set String"))
             {
-                Variables.Set(VariableName, _newValue);
+                _ = Variables.Set(VariableName, _newValue);
                 _resultMessage = $"'{VariableName}' set to '{_newValue}'.";
             }
         }

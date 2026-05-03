@@ -3,6 +3,9 @@ using MelonLoader;
 
 namespace SuzerainModdingKit;
 
+/// <summary>
+/// Static interface for reading and writing game variables.
+/// </summary>
 public static class Variables
 {
     internal static List<string> RegisteredVariables = [];
@@ -14,15 +17,19 @@ public static class Variables
     /// The name of the variable.
     /// Recommended style: PascalCaseModName.PascalCaseVariableName (eg. MyMod.MyVariable).
     /// </param>
-    public static void Register(string name)
+    /// <returns>
+    /// A boolean indicating whether the operation succeeded.
+    /// </returns>
+    public static bool Register(string name)
     {
         if (RegisteredVariables.Contains(name, StringComparer.Ordinal))
         {
             Melon<Core>.Logger.Warning($"The game variable '{name}' has already been registered.");
-            return;
+            return false;
         }
 
         RegisteredVariables.Add(name);
+        return true;
     }
 
     /// <summary>
@@ -90,27 +97,33 @@ public static class Variables
     /// <param name="value">
     /// The new value of the variable. Supported types: bool, int, float, string.
     /// </param>
-    public static void Set(string name, object value)
+    /// <returns>
+    /// A boolean indicating whether the operation succeeded.
+    /// </returns>
+    public static bool Set(string name, object value)
     {
         if (value is bool b)
         {
             DialogueLua.SetVariable(name, b);
+            return true;
         }
-        else if (value is int i)
+        if (value is int i)
         {
             DialogueLua.SetVariable(name, i);
+            return true;
         }
-        else if (value is float f)
+        if (value is float f)
         {
             DialogueLua.SetVariable(name, f);
+            return true;
         }
-        else if (value is string s)
+        if (value is string s)
         {
             DialogueLua.SetVariable(name, s);
+            return true;
         }
-        else
-        {
-            Melon<Core>.Logger.Warning($"Game variable '{name}' not set. Invalid type.");
-        }
+
+        Melon<Core>.Logger.Warning($"Game variable '{name}' not set. Invalid type.");
+        return false;
     }
 }
