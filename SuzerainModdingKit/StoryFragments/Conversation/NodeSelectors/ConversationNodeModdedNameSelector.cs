@@ -17,9 +17,9 @@ public class ConversationNodeModdedNameSelector : ConversationNodeSelector
 
     public override DialogueEntry Resolve(
         DialogueConversation conversation,
-        IReadOnlyList<InjectedNode> injectedNodes)
+        IReadOnlyList<InjectedConversationNode> nodes)
     {
-        foreach (InjectedNode node in injectedNodes)
+        foreach (InjectedConversationNode node in nodes)
         {
             if (node.Node.Name.Equals(Name, StringComparison.Ordinal))
             {

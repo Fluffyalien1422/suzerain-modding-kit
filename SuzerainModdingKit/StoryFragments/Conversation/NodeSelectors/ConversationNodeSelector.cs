@@ -7,5 +7,5 @@ public abstract class ConversationNodeSelector
 {
     public abstract DialogueEntry Resolve(
         DialogueConversation conversation,
-        IReadOnlyList<InjectedNode> injectedNodes);
+        IReadOnlyList<InjectedConversationNode> nodes);
 }
