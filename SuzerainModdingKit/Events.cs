@@ -41,7 +41,7 @@ public static class Events
         /// </summary>
         public string BillName
         {
-            get; init;
+            get;
         }
 
         public BillEventArgs(string billName)

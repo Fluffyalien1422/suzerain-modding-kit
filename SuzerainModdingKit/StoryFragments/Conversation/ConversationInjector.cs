@@ -15,7 +15,7 @@ internal static class ConversationInjector
     private static List<DialogueEntry> FindFinalNodes(
         DialogueEntry originEntry,
         DialogueConversation conversation,
-        IReadOnlyList<int> parentNextIDs)
+        IEnumerable<int> parentNextIDs)
     {
         Stack<DialogueEntry> stack = new();
         stack.Push(originEntry);
@@ -112,9 +112,11 @@ internal static class ConversationInjector
         parent.outgoingLinks.Add(link);
     }
 
+    // CreateNodeOutgoingLinks explicitly takes ReadOnlyCollection rather than an interface
+    // to ensure we never pass a mutable collection to selector.Resolve.
     private static void CreateNodeOutgoingLinks(
         InjectedConversationNode node,
-        IReadOnlyCollection<InjectedConversationNode> nodes)
+        ReadOnlyCollection<InjectedConversationNode> nodes)
     {
         for (int i = 0; i < node.Node.NextNodes.Count; i++)
         {
@@ -144,8 +146,10 @@ internal static class ConversationInjector
         }
     }
 
+    // ResolveHooks explicitly takes ReadOnlyCollection rather than an interface
+    // to ensure we never pass a mutable collection to selector.Resolve.
     private static List<ResolvedConversationNodeHook> ResolveHooks(
-        IReadOnlyCollection<InjectedConversationNode> nodes)
+        ReadOnlyCollection<InjectedConversationNode> nodes)
     {
         List<ResolvedConversationNodeHook> resolvedHooks = [];
         foreach (InjectedConversationNode node in nodes)
@@ -191,7 +195,7 @@ internal static class ConversationInjector
         return resolvedHooks;
     }
 
-    private static void LinkInjectedNodes(IReadOnlyCollection<InjectedConversationNode> nodes)
+    private static void LinkInjectedNodes(ReadOnlyCollection<InjectedConversationNode> nodes)
     {
         // Create the outgoing links first. All the outgoing links have to be created before
         // we can create hooks.
@@ -276,6 +280,7 @@ internal static class ConversationInjector
             }
         }
 
-        LinkInjectedNodes(new ReadOnlyCollection<InjectedConversationNode>(injectedNodes));
+        ReadOnlyCollection<InjectedConversationNode> injectedNodesReadOnly = new(injectedNodes);
+        LinkInjectedNodes(injectedNodesReadOnly);
     }
 }

@@ -7,15 +7,15 @@ public class CustomJournalEntryData
 {
     public string Name
     {
-        get; init;
+        get;
     }
     public string Description
     {
-        get; init;
+        get;
     }
     public int TurnNum
     {
-        get; init;
+        get;
     }
 
     public CustomJournalEntryData(string name, string description, int turnNum)

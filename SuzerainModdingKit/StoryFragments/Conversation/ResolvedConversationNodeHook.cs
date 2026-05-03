@@ -6,15 +6,15 @@ internal sealed class ResolvedConversationNodeHook
 {
     public ConversationNodeHook Hook
     {
-        get; init;
+        get;
     }
     public InjectedConversationNode Node
     {
-        get; init;
+        get;
     }
     public DialogueEntry ResolvedParent
     {
-        get; init;
+        get;
     }
 
     public ResolvedConversationNodeHook(

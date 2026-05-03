@@ -49,12 +49,13 @@ public static class ConversationRegistry
     /// <exception cref="InvalidOperationException">
     /// Thrown if registration is closed.
     /// </exception>
+    /// <seealso cref="ConversationInjection.Register"/>
     public static void RegisterInjection(ConversationInjection injection)
     {
         ArgumentNullException.ThrowIfNull(injection);
         ThrowIfClosed();
 
-        // Clone the injection to ensure it isn't modified after registration.
-        _injections.Add(injection.Clone());
+        injection.Seal();
+        _injections.Add(injection);
     }
 }

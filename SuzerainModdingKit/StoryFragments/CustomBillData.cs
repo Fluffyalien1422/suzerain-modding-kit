@@ -15,42 +15,42 @@ public class CustomBillData
     /// </summary>
     public string Name
     {
-        get; init;
+        get;
     }
     /// <summary>
     /// The name of the token this story fragment should appear on (eg. "Sordland_City_Holsord").
     /// </summary>
     public string AssignedTokenName
     {
-        get; init;
+        get;
     }
     /// <summary>
     /// The full title of the bill shown in the bill panel.
     /// </summary>
     public string Title
     {
-        get; init;
+        get;
     }
     /// <summary>
     /// The full description of the bill shown in the bill panel.
     /// </summary>
     public string Description
     {
-        get; init;
+        get;
     }
     /// <summary>
     /// The short title of the bill shown under the assigned token.
     /// </summary>
     public string HubTitle
     {
-        get; init;
+        get;
     }
     /// <summary>
     /// The short description of the bill shown under the assigned token.
     /// </summary>
     public string HubDescription
     {
-        get; init;
+        get;
     }
 
     /// <summary>

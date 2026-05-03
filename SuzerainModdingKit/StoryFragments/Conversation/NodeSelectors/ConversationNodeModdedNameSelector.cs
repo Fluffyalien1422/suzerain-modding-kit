@@ -13,7 +13,7 @@ public class ConversationNodeModdedNameSelector : ConversationNodeSelector
     /// </summary>
     public string Name
     {
-        get; init;
+        get;
     }
 
     /// <summary>

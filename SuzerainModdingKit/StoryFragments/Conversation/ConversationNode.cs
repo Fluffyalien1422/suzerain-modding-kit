@@ -14,14 +14,14 @@ public class ConversationNode
     /// </summary>
     public string Name
     {
-        get; init;
+        get;
     }
     /// <summary>
     /// The text of the node.
     /// </summary>
     public string Text
     {
-        get; init;
+        get;
     }
     /// <summary>
     /// A read-only list of hooks.
@@ -31,7 +31,7 @@ public class ConversationNode
     /// </remarks>
     public ReadOnlyCollection<ConversationNodeHook> Hooks
     {
-        get; init;
+        get;
     }
     /// <summary>
     /// A read-only list of next node selectors.
@@ -43,7 +43,7 @@ public class ConversationNode
     /// </remarks>
     public ReadOnlyCollection<ConversationNodeSelector> NextNodes
     {
-        get; init;
+        get;
     }
     /// <summary>
     /// The speaker of the line. This property is optional. If null, the node should
@@ -51,7 +51,7 @@ public class ConversationNode
     /// </summary>
     public CharacterSelector SpeakerSelector
     {
-        get; init;
+        get;
     }
 
     /// <summary>
@@ -70,19 +70,19 @@ public class ConversationNode
     /// The text of the node.
     /// </param>
     /// <param name="hooks">
-    /// A list of hooks. Hooks are nodes that this node should attach (or hook) to.
+    /// Optional: A list of hooks. Hooks are nodes that this node should attach (or hook) to.
     /// Hooks should only be used when trying to link to a node that you don't control
     /// (such as a node from vanilla Suzerain or another mod). If you control the node you are
     /// trying to hook to, you should add this node to the other node's
     /// <c cref="NextNodes">NextNodes</c> instead.
     /// </param>
     /// <param name="nextNodes">
-    /// A list of next node selectors. These are the nodes that will show after this one.
+    /// Optional: A list of next node selectors. These are the nodes that will show after this one.
     /// Only the first node with a successful condition will show. If the nodes are choices,
     /// all choice nodes with successful conditions will show.
     /// </param>
     /// <param name="speakerSelector">
-    /// The speaker of the line. This property is optional. If null, the node will
+    /// Optional: The speaker of the line. If null, the node will
     /// be considered a choice rather than a dialogue line.
     /// </param>
     /// <exception cref="ArgumentNullException">

@@ -13,7 +13,7 @@ public class ConversationNodeArticyIDSelector : ConversationNodeSelector
     /// </summary>
     public string ArticyID
     {
-        get; init;
+        get;
     }
 
     /// <summary>

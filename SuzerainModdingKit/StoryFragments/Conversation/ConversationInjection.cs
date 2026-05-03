@@ -8,6 +8,7 @@ namespace SuzerainModdingKit.StoryFragments.Conversation;
 public class ConversationInjection
 {
     private readonly List<ConversationNode> _nodes = [];
+
     /// <summary>
     /// Read-only list of nodes to be injected.
     /// </summary>
@@ -15,13 +16,19 @@ public class ConversationInjection
     {
         get;
     }
-
     /// <summary>
     /// The conversation title to inject the nodes into.
     /// </summary>
     public string ConversationTitle
     {
-        get; init;
+        get;
+    }
+    /// <summary>
+    /// If true, new nodes cannot be added.
+    /// </summary>
+    public bool IsSealed
+    {
+        get; private set;
     }
 
     /// <summary>
@@ -52,26 +59,41 @@ public class ConversationInjection
     /// <exception cref="ArgumentNullException">
     /// Thrown if any required arguments are null.
     /// </exception>
+    /// <exception cref="InvalidOperationException">
+    /// Thrown if the object is sealed.
+    /// </exception>
     public ConversationInjection AddNode(ConversationNode node)
     {
         ArgumentNullException.ThrowIfNull(node);
+        if (IsSealed)
+        {
+            throw new InvalidOperationException("Cannot add new nodes after the object has " +
+                "been sealed.");
+        }
+
         _nodes.Add(node);
         return this;
     }
 
     /// <summary>
-    /// Clones this object.
+    /// Seal the object. New nodes cannot be added once this is called.
+    /// This is automatically called when the injection is registered.
     /// </summary>
-    /// <returns>
-    /// A clone of this object.
-    /// </returns>
-    public ConversationInjection Clone()
+    public void Seal()
     {
-        ConversationInjection cloned = new(ConversationTitle);
-        foreach (ConversationNode node in _nodes)
-        {
-            _ = cloned.AddNode(node);
-        }
-        return cloned;
+        IsSealed = true;
+    }
+
+    /// <summary>
+    /// Register this <c cref="ConversationInjection">ConversationInjection</c> in the
+    /// <c cref="ConversationRegistry">ConversationRegistry</c>.
+    /// </summary>
+    /// <exception cref="InvalidOperationException">
+    /// Thrown if registration is closed.
+    /// </exception>
+    /// <seealso cref="ConversationRegistry.RegisterInjection"/>
+    public void Register()
+    {
+        ConversationRegistry.RegisterInjection(this);
     }
 }
