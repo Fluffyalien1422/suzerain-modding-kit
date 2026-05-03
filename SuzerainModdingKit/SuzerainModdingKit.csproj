@@ -497,12 +497,14 @@
 		<Compile Include="StoryFragments\Conversation\ConversationInjection.cs" />
 		<Compile Include="StoryFragments\Conversation\ConversationInjector.cs" />
 		<Compile Include="StoryFragments\Conversation\ConversationNode.cs" />
+		<Compile Include="StoryFragments\Conversation\ConversationNodeHook.cs" />
 		<Compile Include="StoryFragments\Conversation\InjectedConversationNode.cs" />
 		<Compile Include="StoryFragments\Conversation\NodeSelectors\ConversationNodeModdedNameSelector.cs" />
 		<Compile Include="StoryFragments\Conversation\NodeSelectors\ConversationNodeArticyIDSelector.cs" />
 		<Compile Include="StoryFragments\Conversation\NodeSelectors\ConversationNodeSelector.cs" />
 		<Compile Include="StoryFragments\Conversation\ConversationRegistry.cs" />
 		<Compile Include="StoryFragments\Conversation\Patches.cs" />
+		<Compile Include="StoryFragments\Conversation\ResolvedConversationNodeHook.cs" />
 		<Compile Include="StoryFragments\CustomBillData.cs" />
 		<Compile Include="Utils\ArticyIDGenerator.cs" />
 		<Compile Include="Utils\Il2CppUtils.cs" />

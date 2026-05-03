@@ -13,11 +13,11 @@ public class ConversationNode
     {
         get; init;
     }
-    public IReadOnlyList<ConversationNodeSelector> HookSelectors
+    public IReadOnlyList<ConversationNodeHook> Hooks
     {
         get; init;
     }
-    public IReadOnlyList<ConversationNodeSelector> NextNodeSelectors
+    public IReadOnlyList<ConversationNodeSelector> NextNodes
     {
         get; init;
     }
@@ -31,16 +31,16 @@ public class ConversationNode
     public ConversationNode(
         string name,
         string text,
-        IReadOnlyList<ConversationNodeSelector> hookSelectors = null,
-        IReadOnlyList<ConversationNodeSelector> nextNodeSelectors = null,
+        IReadOnlyList<ConversationNodeHook> hooks = null,
+        IReadOnlyList<ConversationNodeSelector> nextNodes = null,
         CharacterSelector speakerSelector = null)
     {
         Name = name ?? throw new ArgumentNullException(nameof(name));
         Text = text ?? throw new ArgumentNullException(nameof(text));
-        HookSelectors = hookSelectors != null
-            ? new List<ConversationNodeSelector>(hookSelectors) : [];
-        NextNodeSelectors = nextNodeSelectors != null
-            ? new List<ConversationNodeSelector>(nextNodeSelectors) : [];
+        Hooks = hooks != null
+            ? new List<ConversationNodeHook>(hooks) : [];
+        NextNodes = nextNodes != null
+            ? new List<ConversationNodeSelector>(nextNodes) : [];
         SpeakerSelector = speakerSelector;
     }
 }

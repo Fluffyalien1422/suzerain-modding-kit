@@ -3,7 +3,8 @@ using DialogueConversation = Il2CppPixelCrushers.DialogueSystem.Conversation;
 
 namespace SuzerainModdingKit.StoryFragments.Conversation;
 
-public class InjectedNode
+// This class is public because it is used by the public class ConversationNodeSelector.
+public class InjectedConversationNode
 {
     public ConversationNode Node
     {
@@ -18,7 +19,7 @@ public class InjectedNode
         get; init;
     }
 
-    public InjectedNode(
+    public InjectedConversationNode(
         ConversationNode node,
         DialogueEntry entry,
         DialogueConversation conversation)

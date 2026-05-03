@@ -17,7 +17,7 @@ public class ConversationNodeArticyIDSelector : ConversationNodeSelector
 
     public override DialogueEntry Resolve(
         DialogueConversation conversation,
-        IReadOnlyList<InjectedNode> injectedNodes)
+        IReadOnlyList<InjectedConversationNode> nodes)
     {
         foreach (DialogueEntry entry in conversation.dialogueEntries)
         {
