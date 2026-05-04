@@ -1,6 +1,7 @@
 using System.Collections.ObjectModel;
 using SuzerainModdingKit.Character;
 using SuzerainModdingKit.StoryFragments.Conversation.NodeSelectors;
+using SuzerainModdingKit.Utils;
 
 namespace SuzerainModdingKit.StoryFragments.Conversation;
 
@@ -53,7 +54,28 @@ public class ConversationNode
     {
         get;
     }
-
+    /// <summary>
+    /// An optional Lua script to run when the dialogue is spoken.
+    /// </summary>
+    public string LuaScript
+    {
+        get;
+    }
+    /// <summary>
+    /// An optional Lua condition to determine whether the dialogue should be spoken or not.
+    /// </summary>
+    public string LuaCondition
+    {
+        get;
+    }
+    /// <summary>
+    /// Optional conversation-related actions to perform when this dialogue is spoken.
+    /// </summary>
+    /// <seealso cref="ConversationNodeSequenceBuilder"/>
+    public string Sequence
+    {
+        get;
+    }
     /// <summary>
     /// Returns a boolean indicating whether the node should be considered a choice
     /// (is <c cref="SpeakerSelector">SpeakerSelector</c> null?).
@@ -85,6 +107,16 @@ public class ConversationNode
     /// Optional: The speaker of the line. If null, the node will
     /// be considered a choice rather than a dialogue line.
     /// </param>
+    /// <param name="luaScript">
+    /// Optional: A Lua script to run when the dialogue is spoken.
+    /// </param>
+    /// <param name="luaCondition">
+    /// Optional: A Lua condition to determine whether the dialogue should be spoken or not.
+    /// </param>
+    /// <param name="sequence">
+    /// Optional: Conversation-related actions to perform when this dialogue is spoken.
+    /// See <see cref="ConversationNodeSequenceBuilder"/>.
+    /// </param>
     /// <exception cref="ArgumentNullException">
     /// Thrown if any required arguments are null.
     /// </exception>
@@ -93,7 +125,10 @@ public class ConversationNode
         string text,
         IReadOnlyList<ConversationNodeHook> hooks = null,
         IReadOnlyList<ConversationNodeSelector> nextNodes = null,
-        CharacterSelector speakerSelector = null)
+        CharacterSelector speakerSelector = null,
+        string luaScript = null,
+        string luaCondition = null,
+        string sequence = null)
     {
         Name = name ?? throw new ArgumentNullException(nameof(name));
         Text = text ?? throw new ArgumentNullException(nameof(text));
@@ -101,5 +136,8 @@ public class ConversationNode
         NextNodes = new ReadOnlyCollection<ConversationNodeSelector>(
             nextNodes != null ? [.. nextNodes] : []);
         SpeakerSelector = speakerSelector;
+        LuaScript = luaScript;
+        LuaCondition = luaCondition;
+        Sequence = sequence;
     }
 }

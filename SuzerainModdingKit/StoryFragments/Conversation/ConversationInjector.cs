@@ -232,6 +232,9 @@ internal static class ConversationInjector
         string articyID = ArticyIDGenerator.GenerateArticyID(node.Name);
         newEntry.SetTextField("Articy Id", articyID);
         newEntry.currentLocalizedDialogueText = node.Text;
+        newEntry.userScript = node.LuaScript;
+        newEntry.conditionsString = node.LuaCondition;
+        newEntry.currentLocalizedSequence = node.Sequence;
 
         // Actor = The person speaking the line.
         // Conversant = The person listening to the line.

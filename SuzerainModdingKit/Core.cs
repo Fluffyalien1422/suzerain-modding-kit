@@ -32,33 +32,32 @@ internal sealed class Core : MelonMod
         LoggerInstance.Msg("Cleaning up mod saves.");
         SaveManager.CleanupOrphanedModSaves();
 
-        //TODO: node conditions and scripts
-
-        //_ = ConversationRegistry.RegisterInjection(
-        //    new ConversationInjection("Sordland/Turn02/Personal_Funeral")
-        //        .AddNode(new ConversationNode(
-        //            name: "TestMod.Hello",
-        //            text: "Hello from Suzerain Modding Kit!",
-        //            speakerSelector: new CharacterNameSelector("Petr Vectern"),
-        //            hooks: [
-        //                new ConversationNodeHook(
+        //new ConversationInjection("Sordland/Turn02/Personal_Funeral")
+        //    .AddNode(new ConversationNode(
+        //        name: "TestMod.Hello",
+        //        text: "Hello from Suzerain Modding Kit!",
+        //        speakerSelector: new CharacterNameSelector("Petr Vectern"),
+        //        sequence: new ConversationNodeSequenceBuilder()
+        //            .AddConversant("Iosef Lancea")
+        //            .ToString(),
+        //        luaScript: "Variable[\"TestMod.HelloNode\"]=true;",
+        //        hooks: [
+        //            new ConversationNodeHook(
         //                    selector: new ConversationNodeArticyIDSelector("0x0100000400008561")),
-        //            ]))
-        //        .AddNode(new ConversationNode(
-        //            name: "TestMod.Hello2",
-        //            text: "Hey Petr!",
-        //            hooks: [
-        //                new ConversationNodeHook(
-        //                    priority: ConversationNodeHook.HookPriority.High,
-        //                    selector: new ConversationNodeModdedNameSelector("TestMod.Hello")),
-        //            ]))
-        //        .AddNode(new ConversationNode(
-        //            name: "TestMod.Hello3",
-        //            text: "Hello Petr.",
-        //            hooks: [
-        //                new ConversationNodeHook(
-        //                    selector: new ConversationNodeModdedNameSelector("TestMod.Hello")),
-        //            ])));
+        //        ],
+        //        nextNodes: [
+        //            new ConversationNodeModdedNameSelector("TestMod.Hello2"),
+        //            new ConversationNodeModdedNameSelector("TestMod.Hello3"),
+        //        ]))
+        //    .AddNode(new ConversationNode(
+        //        name: "TestMod.Hello2",
+        //        text: "Var is true.",
+        //        luaCondition: "Variable[\"TestMod.HelloNode\"]==true"))
+        //    .AddNode(new ConversationNode(
+        //        name: "TestMod.Hello3",
+        //        text: "Var is false.",
+        //        luaCondition: "Variable[\"TestMod.HelloNode\"]==false"))
+        //    .Register();
 
         LoggerInstance.Msg("Pre-initialization complete.");
     }
