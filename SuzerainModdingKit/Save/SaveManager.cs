@@ -7,7 +7,8 @@ namespace SuzerainModdingKit.Save;
 internal static class SaveManager
 {
     public static readonly string UserDir = Environment.GetEnvironmentVariable("userprofile");
-    public static readonly string SuzerainSavePath = Path.Combine(UserDir, @"AppData\LocalLow\Torpor Games\Suzerain");
+    public static readonly string SuzerainSavePath = Path.Combine(UserDir,
+        @"AppData\LocalLow\Torpor Games\Suzerain");
     public static readonly string ModSavePath = Path.Combine(SuzerainSavePath, "moddingkit");
 
     private static bool _firstLoadSaveCalled;
@@ -24,7 +25,10 @@ internal static class SaveManager
             .GetFiles(SuzerainSavePath, "*.json", SearchOption.TopDirectoryOnly)
             .Select(Path.GetFileName)
             .ToHashSet(StringComparer.OrdinalIgnoreCase);
-        string[] modSavePaths = Directory.GetFiles(ModSavePath, "*.json", SearchOption.TopDirectoryOnly);
+        string[] modSavePaths = Directory.GetFiles(
+            ModSavePath,
+            "*.json",
+            SearchOption.TopDirectoryOnly);
 
         foreach (string filePath in modSavePaths)
         {
@@ -87,7 +91,8 @@ internal static class SaveManager
                 }
                 else
                 {
-                    Melon<Core>.Logger.Warning($"Game variable '{variableName}' not saved. Invalid type.");
+                    Melon<Core>.Logger.Warning($"Game variable '{variableName}' not saved. " +
+                        "Invalid type.");
                 }
             }
         }
@@ -152,7 +157,8 @@ internal static class SaveManager
         }
         catch (Exception e)
         {
-            Melon<Core>.Logger.Warning($"Failed to load game variables from mod save at '{savePath}': {e}");
+            Melon<Core>.Logger.Warning("Failed to load game variables from mod save at " +
+                $"'{savePath}': {e}");
             return;
         }
 
@@ -178,7 +184,8 @@ internal static class SaveManager
             case JsonValueKind.Array:
             case JsonValueKind.Null:
             default:
-                Melon<Core>.Logger.Warning($"Game variable '{variableName}' not loaded. Invalid type.");
+                Melon<Core>.Logger.Warning($"Game variable '{variableName}' not loaded. " +
+                    "Invalid type.");
                 break;
         }
     }

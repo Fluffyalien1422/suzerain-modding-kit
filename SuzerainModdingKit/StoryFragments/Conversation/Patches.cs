@@ -20,6 +20,6 @@ internal static class ConversationPanel_Setup_Patch
             return;
         }
 
-        ConversationInjector.LoadInjections(conversation);
+        ConversationInjector.PatchConversation(conversation);
     }
 }

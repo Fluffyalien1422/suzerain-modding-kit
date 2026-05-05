@@ -86,7 +86,8 @@ public class CustomBillData
         string hubDescription)
     {
         Name = name ?? throw new ArgumentNullException(nameof(name));
-        AssignedTokenName = assignedTokenName ?? throw new ArgumentNullException(nameof(assignedTokenName));
+        AssignedTokenName = assignedTokenName ??
+            throw new ArgumentNullException(nameof(assignedTokenName));
         Title = title ?? throw new ArgumentNullException(nameof(title));
         Description = description ?? throw new ArgumentNullException(nameof(description));
         HubTitle = hubTitle ?? throw new ArgumentNullException(nameof(hubTitle));

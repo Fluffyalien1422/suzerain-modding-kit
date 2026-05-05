@@ -38,25 +38,20 @@ internal sealed class Core : MelonMod
         //        text: "Hello from Suzerain Modding Kit!",
         //        speakerSelector: new CharacterNameSelector("Petr Vectern"),
         //        sequence: new ConversationNodeSequenceBuilder()
-        //            .AddConversant("Iosef Lancea")
+        //            .PlaySoundEffect("PhoneRingPickUp")
         //            .ToString(),
-        //        luaScript: "Variable[\"TestMod.HelloNode\"]=true;",
+        //        luaScript: "End();", // should automatically be removed
         //        hooks: [
         //            new ConversationNodeHook(
-        //                    selector: new ConversationNodeArticyIDSelector("0x0100000400008561")),
-        //        ],
-        //        nextNodes: [
-        //            new ConversationNodeModdedNameSelector("TestMod.Hello2"),
-        //            new ConversationNodeModdedNameSelector("TestMod.Hello3"),
+        //                selector: new ConversationNodeArticyIDSelector("0x0100000400008561")),
         //        ]))
         //    .AddNode(new ConversationNode(
         //        name: "TestMod.Hello2",
-        //        text: "Var is true.",
-        //        luaCondition: "Variable[\"TestMod.HelloNode\"]==true"))
-        //    .AddNode(new ConversationNode(
-        //        name: "TestMod.Hello3",
-        //        text: "Var is false.",
-        //        luaCondition: "Variable[\"TestMod.HelloNode\"]==false"))
+        //        text: "Hi!",
+        //        hooks: [
+        //            new ConversationNodeHook(
+        //                selector: new ConversationNodeModdedNameSelector("TestMod.Hello")),
+        //        ]))
         //    .Register();
 
         LoggerInstance.Msg("Pre-initialization complete.");

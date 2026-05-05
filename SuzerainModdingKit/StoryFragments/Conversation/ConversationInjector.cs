@@ -10,7 +10,7 @@ namespace SuzerainModdingKit.StoryFragments.Conversation;
 
 internal static class ConversationInjector
 {
-    private static readonly HashSet<string> _conversationsInjected = [];
+    private static readonly HashSet<string> _conversationsPatched = [];
 
     private static List<DialogueEntry> FindFinalNodes(
         DialogueEntry originEntry,
@@ -64,6 +64,15 @@ internal static class ConversationInjector
         {
             priority = hook.ConditionPriority,
         };
+
+        // The 'End' function ends the conversation (as you might've guessed) and is included
+        // in all final nodes in the vanilla dialogues. Remove 'End' calls from the parent
+        // so the new nodes will play.
+        parent.userScript = parent.userScript
+            .Replace("End()", string.Empty, StringComparison.Ordinal);
+        // 'End' seems to not actually be required to end a conversation since Dialogue System
+        // does it automatically if the last played node has no outgoing links, so we don't
+        // need to add 'End' to our custom nodes.
 
         // ConditionGated: Choose the first (sorted by priority) outgoing link with a successful
         // condition. For choices, all with successful conditions will show.
@@ -257,13 +266,15 @@ internal static class ConversationInjector
         return new InjectedConversationNode(node, newEntry, conversation);
     }
 
-    public static void LoadInjections(DialogueConversation conversation)
+    public static void PatchConversation(DialogueConversation conversation)
     {
-        if (_conversationsInjected.Contains(conversation.Title, StringComparer.Ordinal))
+        if (_conversationsPatched.Contains(conversation.Title, StringComparer.Ordinal))
         {
             return;
         }
-        _conversationsInjected.Add(conversation.Title);
+        _conversationsPatched.Add(conversation.Title);
+
+        Melon<Core>.Logger.Msg($"Patching conversation '{conversation.Title}'.");
 
         List<InjectedConversationNode> injectedNodes = [];
         foreach (ConversationInjection injection in ConversationRegistry.Injections)
@@ -282,8 +293,15 @@ internal static class ConversationInjector
                 }
             }
         }
+        Melon<Core>.Logger.Msg($"Injected {injectedNodes.Count} nodes.");
+        if (injectedNodes.Count == 0)
+        {
+            return;
+        }
 
         ReadOnlyCollection<InjectedConversationNode> injectedNodesReadOnly = new(injectedNodes);
         LinkInjectedNodes(injectedNodesReadOnly);
+
+        Melon<Core>.Logger.Msg($"Patched conversation '{conversation.Title}'.");
     }
 }
