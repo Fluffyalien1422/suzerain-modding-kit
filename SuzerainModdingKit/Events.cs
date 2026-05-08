@@ -5,18 +5,21 @@ namespace SuzerainModdingKit;
 /// </summary>
 public static class Events
 {
+    // This class is organized in the following order:
+    // 1. Event properties:
+    //   1a. Before events. Alphabetical order.
+    //   1b. After (On) events. Alphabetical order.
+    // 2. EventArgs classes: Same order as properties.
+    // 3. Trigger methods: Same order as properties.
+
     /// <summary>
-    /// Called when a step is evaluated. Note that this may be called multiple times per step.
+    /// Called before the game sets up a decision. This event can modify the decision.
     /// </summary>
-    public static event EventHandler OnEvaluateStep;
+    public static event EventHandler BeforeDecisionSetup;
     /// <summary>
-    /// Called when a step ends.
+    /// Called before a step ends.
     /// </summary>
-    public static event EventHandler OnStepEnd;
-    /// <summary>
-    /// Called when a turn ends.
-    /// </summary>
-    public static event EventHandler OnTurnEnd;
+    public static event EventHandler BeforeStepEnd;
     /// <summary>
     /// Called when a bill is signed by the player.
     /// </summary>
@@ -26,9 +29,17 @@ public static class Events
     /// </summary>
     public static event EventHandler<BillEventArgs> OnBillVetoed;
     /// <summary>
+    /// Called when a step is evaluated. Note that this may be called multiple times per step.
+    /// </summary>
+    public static event EventHandler OnEvaluateStep;
+    /// <summary>
     /// Called when the journal is initialized. Note that this may be called multiple times.
     /// </summary>
     public static event EventHandler OnJournalInitialized;
+    /// <summary>
+    /// Called when a turn ends.
+    /// </summary>
+    public static event EventHandler OnTurnEnd;
 
     /// <summary>
     /// Event args passed to <c cref="OnBillSigned">OnBillSigned</c> and
@@ -50,19 +61,9 @@ public static class Events
         }
     }
 
-    internal static void TriggerOnEvaluateStep()
+    internal static void TriggerBeforeStepEnd()
     {
-        OnEvaluateStep?.Invoke(sender: null, EventArgs.Empty);
-    }
-
-    internal static void TriggerOnStepEnd()
-    {
-        OnStepEnd?.Invoke(sender: null, EventArgs.Empty);
-    }
-
-    internal static void TriggerOnTurnEnd()
-    {
-        OnTurnEnd?.Invoke(sender: null, EventArgs.Empty);
+        BeforeStepEnd?.Invoke(sender: null, EventArgs.Empty);
     }
 
     internal static void TriggerOnBillSigned(string billName)
@@ -75,8 +76,18 @@ public static class Events
         OnBillVetoed?.Invoke(sender: null, new BillEventArgs(billName));
     }
 
+    internal static void TriggerOnEvaluateStep()
+    {
+        OnEvaluateStep?.Invoke(sender: null, EventArgs.Empty);
+    }
+
     internal static void TriggerOnJournalInitialized()
     {
         OnJournalInitialized?.Invoke(sender: null, EventArgs.Empty);
+    }
+
+    internal static void TriggerOnTurnEnd()
+    {
+        OnTurnEnd?.Invoke(sender: null, EventArgs.Empty);
     }
 }

@@ -1,7 +1,7 @@
 using Il2Cpp;
 using SuzerainModdingKit.Utils;
 
-namespace SuzerainModdingKit.StoryFragments;
+namespace SuzerainModdingKit.StoryFragments.Bill;
 
 /// <summary>
 /// Represents the data required to define a custom bill story fragment for injection

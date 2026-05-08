@@ -488,12 +488,14 @@
 		<Compile Include="Journal\JournalManager.cs" />
 		<Compile Include="Core.cs" />
 		<Compile Include="Events.cs" />
-		<Compile Include="EventsPatches.cs" />
+		<Compile Include="GameFlowPatches.cs" />
 		<Compile Include="GameState.cs" />
+		<Compile Include="Journal\Patches.cs" />
 		<Compile Include="Save\ModSaveData.cs" />
 		<Compile Include="Save\Patches.cs" />
 		<Compile Include="Save\SaveManager.cs" />
 		<Compile Include="SmkInfo.cs" />
+		<Compile Include="StoryFragments\Bill\Patches.cs" />
 		<Compile Include="StoryFragments\Conversation\ConversationInjection.cs" />
 		<Compile Include="StoryFragments\Conversation\ConversationInjector.cs" />
 		<Compile Include="StoryFragments\Conversation\ConversationNode.cs" />
@@ -505,7 +507,8 @@
 		<Compile Include="StoryFragments\Conversation\ConversationRegistry.cs" />
 		<Compile Include="StoryFragments\Conversation\Patches.cs" />
 		<Compile Include="StoryFragments\Conversation\ResolvedConversationNodeHook.cs" />
-		<Compile Include="StoryFragments\CustomBillData.cs" />
+		<Compile Include="StoryFragments\Bill\CustomBillData.cs" />
+		<Compile Include="StoryFragments\Decision\Patches.cs" />
 		<Compile Include="Utils\ArticyIDGenerator.cs" />
 		<Compile Include="Utils\ConversationNodeSequenceBuilder.cs" />
 		<Compile Include="Utils\Il2CppUtils.cs" />

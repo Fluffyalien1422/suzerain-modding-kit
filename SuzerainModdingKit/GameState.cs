@@ -1,6 +1,6 @@
 using Il2Cpp;
 using MelonLoader;
-using SuzerainModdingKit.StoryFragments;
+using SuzerainModdingKit.StoryFragments.Bill;
 
 namespace SuzerainModdingKit;
 
