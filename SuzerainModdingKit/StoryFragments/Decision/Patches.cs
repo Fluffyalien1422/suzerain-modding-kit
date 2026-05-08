@@ -1,15 +1,19 @@
 using HarmonyLib;
 using Il2Cpp;
+using MelonLoader;
 
 namespace SuzerainModdingKit.StoryFragments.Decision;
 
-[HarmonyPatch(typeof(DecisionPanel), nameof(DecisionPanel.Setup))]
-internal static class DecisionPanel_Setup_Patch
+[HarmonyPatch(typeof(DecisionPanel), nameof(DecisionPanel.Show))]
+internal static class DecisionPanel_Show_Patch
 {
     // Use Prefix to modify the decision before it shows.
-    public static void Prefix(DecisionData decisionData, bool isWarDecision)
+    public static void Prefix(DecisionPanel __instance)
     {
-        //TODO: call BeforeDecisionSetup and pass in an object which has methods to modify
-        // the decision.
+        string decisionName = __instance.currentDecisionData.NameInDatabase;
+        DecisionShowContext context = new(decisionName);
+
+        Melon<Core>.Logger.Msg($"Event: BeforeDecisionShow ({decisionName}).");
+        Events.TriggerBeforeDecisionShow(context);
     }
 }

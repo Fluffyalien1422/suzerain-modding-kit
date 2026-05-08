@@ -1,3 +1,5 @@
+using SuzerainModdingKit.StoryFragments.Decision;
+
 namespace SuzerainModdingKit;
 
 /// <summary>
@@ -13,9 +15,9 @@ public static class Events
     // 3. Trigger methods: Same order as properties.
 
     /// <summary>
-    /// Called before the game sets up a decision. This event can modify the decision.
+    /// Called before the game shows a decision. This event can modify the decision.
     /// </summary>
-    public static event EventHandler BeforeDecisionSetup;
+    public static event EventHandler<DecisionShowEventArgs> BeforeDecisionShow;
     /// <summary>
     /// Called before a step ends.
     /// </summary>
@@ -59,6 +61,24 @@ public static class Events
         {
             BillName = billName ?? throw new ArgumentNullException(nameof(billName));
         }
+    }
+
+    public class DecisionShowEventArgs : EventArgs
+    {
+        public DecisionShowContext Context
+        {
+            get;
+        }
+
+        public DecisionShowEventArgs(DecisionShowContext context)
+        {
+            Context = context ?? throw new ArgumentNullException(nameof(context));
+        }
+    }
+
+    internal static void TriggerBeforeDecisionShow(DecisionShowContext context)
+    {
+        BeforeDecisionShow?.Invoke(sender: null, new DecisionShowEventArgs(context));
     }
 
     internal static void TriggerBeforeStepEnd()
