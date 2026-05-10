@@ -13,6 +13,7 @@
 		<AssemblyName>SuzerainModdingKit</AssemblyName>
 		<LangVersion>latest</LangVersion>
 		<ImplicitUsings>enable</ImplicitUsings>
+		<Platforms>x64</Platforms>
 	</PropertyGroup>
 
 	<ItemGroup>
