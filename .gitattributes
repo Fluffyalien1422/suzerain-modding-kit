@@ -1,0 +1,32 @@
+# Default: normalize text to LF on commit, deliver as LF in working tree.
+* text=auto eol=lf
+
+# Source and config files: always LF, regardless of git config on the
+# contributor's machine. Matches .editorconfig.
+*.cs       text eol=lf
+*.csproj   text eol=lf
+*.sln      text eol=lf
+*.props    text eol=lf
+*.targets  text eol=lf
+*.json     text eol=lf
+*.yml      text eol=lf
+*.yaml     text eol=lf
+*.md       text eol=lf
+*.editorconfig text eol=lf
+.gitignore text eol=lf
+.gitattributes text eol=lf
+
+# Windows-only scripts keep CRLF so cmd.exe/PowerShell don't choke.
+*.bat      text eol=crlf
+*.cmd      text eol=crlf
+*.ps1      text eol=crlf
+
+# Binary assets — never normalize.
+*.png      binary
+*.jpg      binary
+*.jpeg     binary
+*.gif      binary
+*.ico      binary
+*.dll      binary
+*.exe      binary
+*.pdb      binary
