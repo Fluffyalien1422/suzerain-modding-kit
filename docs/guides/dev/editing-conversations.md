@@ -44,6 +44,8 @@ new ConversationInjection("Sordland/Turn02/Personal_Funeral")
     .Register();
 ```
 
+Injections **must** be registered in `OnInitializeMelon`. `Register` will throw an exception if called after `OnInitializeMelon`.
+
 ### Important Types
 
 What's happening here? First, let's look at the different types and what they do:
