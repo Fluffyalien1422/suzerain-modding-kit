@@ -10,6 +10,8 @@
   href: debug-overlay.md
 - name: Developing Mods
   href: developing-mods.md
+- name: Editing Conversations
+  href: editing-conversations.md
 - name: Events
   href: events.md
 - name: Variables
