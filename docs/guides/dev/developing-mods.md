@@ -2,20 +2,20 @@
 
 A guide to creating Suzerain mods with MelonLoader and Suzerain Modding Kit. This is a simple guide that should be easy to follow, but it does assume that you have atleast a basic understanding of programming and C#. If you have never programmed in C# before, we highly recommend learning the basics of programming and/or C# first.
 
-This guide is intended for Windows and the Steam version of Suzerain.
+This guide is intended for the Steam version of Suzerain. Setup steps differ slightly between Windows and Linux; everything after Setup applies to both.
 
 ## Beta Disclaimer
 
 Suzerain Modding Kit is currently in beta and should not be considered stable. Expect bugs and crashes. Minor updates may contain breaking API changes.
 
-## Setup
+## Setup (Windows)
 
 1. Follow the [Installing Mods](../user/installing-mods.md) guide to install MelonLoader and Suzerain Modding Kit.
 2. Install [Visual Studio](https://visualstudio.microsoft.com/downloads/) (Visual Studio, not Visual Studio Code).
 3. Download the [MelonLoader VS Wizard](https://github.com/TrevTV/MelonLoader.VSWizard/releases) and run the `.vsix` file to install it as a Visual Studio extension.
 4. Open Visual Studio and create a new project. Select "MelonLoader Mod" as the project template.
 5. Fill in the project info and create. Visual Studio will open a file selector, navigate to and select `C:\Program Files (x86)\Steam\steamapps\common\Suzerain\Suzerain.exe`.
-6. Open the `.csproj` and add `<Reference Include="SuzerainModdingKit"><HintPath>$(GamePath)\Mods\SuzerainModdingKit.dll</HintPath></Reference>` where the other references are (usually in the first `ItemGroup`).
+6. Open the `.csproj` and add `<Reference Include="SuzerainModdingKit"><HintPath>$(GamePath)/Mods/SuzerainModdingKit.dll</HintPath></Reference>` where the other references are (usually in the first `ItemGroup`).
 7. In Visual Studio, set the build platform to `x64`.
     1. Select Build > Configuration Manager.
     2. Open the active solution platform dropdown. If `x64` is already there, skip the next step. Otherwise, continue.
@@ -29,6 +29,58 @@ Suzerain Modding Kit is currently in beta and should not be considered stable. E
     2. Add spaces to the mod name (second argument) and change your user profile name (fourth argument) to your Nexus Mods account name.
     3. It should look like this now: `[assembly: MelonInfo(typeof(MyMod.Core), "My Mod", "1.0.0", "My User Name", null)]`.
 9. Recommended: Set the `Core` class to `internal sealed`: `internal sealed class Core : MelonMod`.
+
+## Setup (Linux, Steam Proton)
+
+The MelonLoader VS Wizard is Windows + Visual Studio only, so the setup on Linux uses the `dotnet` CLI directly. Suzerain itself runs under Proton; the build toolchain is fully native.
+
+1. Follow the [Installing Mods](../user/installing-mods.md) guide (Linux section) to install MelonLoader and Suzerain Modding Kit.
+2. Install the .NET 8 SDK (`dotnet-sdk-8.0` on Debian/Ubuntu/Fedora, `dotnet-sdk` on Arch).
+3. Create your mod project:
+    ```sh
+    dotnet new classlib -n MyMod -f net6.0
+    cd MyMod
+    ```
+4. Replace the generated `MyMod.csproj` with something like the following. This references the same Il2Cpp/MelonLoader assemblies the kit references, plus Suzerain Modding Kit itself.
+
+    ```xml
+    <Project Sdk="Microsoft.NET.Sdk">
+      <PropertyGroup>
+        <TargetFramework>net6.0</TargetFramework>
+        <Platforms>x64</Platforms>
+        <GamePath Condition=" '$(GamePath)' == '' AND '$(SUZERAIN_GAME_PATH)' != '' ">$(SUZERAIN_GAME_PATH)</GamePath>
+        <GamePath Condition=" '$(GamePath)' == '' ">$(HOME)/.steam/steam/steamapps/common/Suzerain</GamePath>
+      </PropertyGroup>
+
+      <ItemGroup>
+        <Reference Include="SuzerainModdingKit">
+          <HintPath>$(GamePath)/Mods/SuzerainModdingKit.dll</HintPath>
+        </Reference>
+        <Reference Include="MelonLoader">
+          <HintPath>$(GamePath)/MelonLoader/net6/MelonLoader.dll</HintPath>
+        </Reference>
+        <Reference Include="0Harmony">
+          <HintPath>$(GamePath)/MelonLoader/net6/0Harmony.dll</HintPath>
+        </Reference>
+        <Reference Include="Il2CppInterop.Runtime">
+          <HintPath>$(GamePath)/MelonLoader/net6/Il2CppInterop.Runtime.dll</HintPath>
+        </Reference>
+        <Reference Include="Assembly-CSharp">
+          <HintPath>$(GamePath)/MelonLoader/Il2CppAssemblies/Assembly-CSharp.dll</HintPath>
+        </Reference>
+        <!-- Add other Il2Cpp* references your mod needs from MelonLoader/Il2CppAssemblies/. -->
+      </ItemGroup>
+
+      <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+        <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(GamePath)/Mods" />
+      </Target>
+    </Project>
+    ```
+
+5. Add a `Core.cs` with your `MelonMod` entry point (see the example below in this guide).
+6. Build with `dotnet build -c Debug -p:Platform=x64`. The DLL is copied to the Suzerain `Mods` folder automatically.
+7. If your Steam library lives outside `~/.steam/steam/...`, set `SUZERAIN_GAME_PATH=/your/path` before running the build, or hardcode `<GamePath>` in your csproj.
+8. Recommended: Update `MelonInfo` and `Core` as described in step 8–9 of the Windows setup above.
 
 ## A New Decision
 
