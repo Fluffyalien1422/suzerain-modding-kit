@@ -39,7 +39,7 @@ Install [MelonLoader.Installer.exe](https://github.com/LavaGang/MelonLoader.Inst
 
 You must launch Suzerain after installing MelonLoader atleast once so MelonLoader can create the necessary files.
 
-Launch Suzerain from Steam as normal. This will launch the MelonLoader terminal before launching the game. The first launch may take a while. Once you reach the Suzerain main menu screen, just exit the game.
+Launch Suzerain from Steam as normal. This will launch the MelonLoader console before launching the game. The first launch may take a while. Once you reach the Suzerain main menu screen, just exit the game.
 
 ## Install Suzerain Modding Kit
 
