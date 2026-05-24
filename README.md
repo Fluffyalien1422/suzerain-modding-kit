@@ -22,9 +22,9 @@ Suzerain Modding Kit provides an API for modders to extend Suzerain using C# and
 
 ## Current Status
 
-- **Beta**: Expect bugs, crashes, and breaking changes in minor updates.
+- **Beta:** Expect bugs, crashes, and breaking changes in minor updates.
 - **Steam only:** The API and installation workflow are currently targed to Steam.
-- **Windows expected**: Suzerain Modding Kit is built for Windows x64 but it may run on Linux through Proton. It has only been tested on Windows and documentation is targeted to Windows.
+- **Windows expected:** Suzerain Modding Kit is built for Windows x64 but it may run on Linux through Proton. It has only been tested on Windows and documentation is targeted to Windows.
 
 ## Contributing
 
