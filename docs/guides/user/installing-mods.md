@@ -43,9 +43,9 @@ Launch Suzerain from Steam as normal. This will launch the MelonLoader console b
 
 If the game freezes when quitting, apply this fix:
 
-1. Select Suzerain in your Steam Library.
+1. Select Suzerain in your Steam library.
 2. Select the gear icon > Properties.
-3. In launch options, add `--quitfix`.
+3. Under launch options, add `--quitfix`.
 
 ## Install Suzerain Modding Kit
 
