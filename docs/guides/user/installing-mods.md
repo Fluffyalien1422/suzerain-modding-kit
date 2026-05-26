@@ -41,6 +41,12 @@ You must launch Suzerain after installing MelonLoader atleast once so MelonLoade
 
 Launch Suzerain from Steam as normal. This will launch the MelonLoader console before launching the game. The first launch may take a while. Once you reach the Suzerain main menu screen, just exit the game.
 
+If the game freezes when quitting, apply this fix:
+
+1. Select Suzerain in your Steam Library.
+2. Select the gear icon > Properties.
+3. In launch options, add `--quitfix`.
+
 ## Install Suzerain Modding Kit
 
 Suzerain Modding Kit is the modding API for Suzerain.
@@ -79,4 +85,3 @@ To install most mods:
 See [Disabling Mods](disabling-mods.md) to learn how to disable mods without uninstalling them.
 
 See [Uninstalling Mods](uninstalling-mods.md) to learn how to uninstall mods or uninstall MelonLoader entirely.
-
