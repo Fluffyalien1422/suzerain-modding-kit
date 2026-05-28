@@ -12,9 +12,11 @@ Suzerain Modding Kit is currently in beta and should not be considered stable. E
 
 1. Follow the [Installing Mods](../user/installing-mods.md) guide to install MelonLoader and Suzerain Modding Kit.
 2. Install [Visual Studio](https://visualstudio.microsoft.com/downloads/) (Visual Studio, not Visual Studio Code).
+    - In the Visual Studio Installer, ensure you also install the ".NET desktop development" workload.
 3. Download the [MelonLoader VS Wizard](https://github.com/TrevTV/MelonLoader.VSWizard/releases) and run the `.vsix` file to install it as a Visual Studio extension.
 4. Open Visual Studio and create a new project. Select "MelonLoader Mod" as the project template.
-5. Fill in the project info and create. Visual Studio will open a file selector, navigate to and select `C:\Program Files (x86)\Steam\steamapps\common\Suzerain\Suzerain.exe`.
+5. Fill in the project info and create. Visual Studio will open a file selector, navigate to and select `Suzerain.exe`.
+    - The default install location is `C:\Program Files (x86)\Steam\steamapps\common\Suzerain\Suzerain.exe`.
 6. Open the `.csproj` and add `<Reference Include="SuzerainModdingKit"><HintPath>$(GamePath)\Mods\SuzerainModdingKit.dll</HintPath></Reference>` where the other references are (usually in the first `ItemGroup`).
 7. In Visual Studio, set the build platform to `x64`.
     1. Select Build > Configuration Manager.
@@ -256,4 +258,3 @@ Congratulations! You just made your first Suzerain mod.
 - See more [development guides](index.md).
 - See the [API reference](../../api/SuzerainModdingKit.yml).
 - **Where do I post my mods?** The recommended site to post mods on is [Nexus Mods](https://www.nexusmods.com/games/suzerain). You may also promote your mods in the `#mod-promotions` channel on our [Discord server](https://discord.gg/za8eDBJ8TH).
-
