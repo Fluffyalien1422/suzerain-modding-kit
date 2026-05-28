@@ -11,8 +11,8 @@ public abstract class ConversationNodeSelector
     /// <summary>
     /// Select the conversation node.
     /// </summary>
-    /// <param name="conversation">
-    /// The conversation to search in.
+    /// <param name="currentConversation">
+    /// The current conversation.
     /// </param>
     /// <param name="nodes">
     /// A read-only list of all injected nodes.
@@ -20,7 +20,10 @@ public abstract class ConversationNodeSelector
     /// <returns>
     /// The dialogue entry of the resolved node or null if it could not be found.
     /// </returns>
+    /// <exception cref="ArgumentNullException">
+    /// May throw if required arguments are null.
+    /// </exception>
     public abstract DialogueEntry Resolve(
-        DialogueConversation conversation,
+        DialogueConversation currentConversation,
         IReadOnlyCollection<InjectedConversationNode> nodes);
 }

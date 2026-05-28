@@ -31,16 +31,19 @@ public class ConversationNodeModdedNameSelector : ConversationNodeSelector
     }
 
     public override DialogueEntry Resolve(
-        DialogueConversation conversation,
+        DialogueConversation currentConversation,
         IReadOnlyCollection<InjectedConversationNode> nodes)
     {
+        ArgumentNullException.ThrowIfNull(nodes);
+
         foreach (InjectedConversationNode node in nodes)
         {
-            if (node.Node.Name.Equals(Name, StringComparison.Ordinal))
+            if (string.Equals(node.Node.Name, Name, StringComparison.Ordinal))
             {
                 return node.Entry;
             }
         }
+
         return null;
     }
 }

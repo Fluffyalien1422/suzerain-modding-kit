@@ -11,4 +11,14 @@ internal static class Il2CppUtils
         }
         return il2CppList;
     }
+
+    public static List<T> ListFromIl2CppList<T>(Il2CppSystem.Collections.Generic.List<T> il2CppList)
+    {
+        List<T> list = [];
+        foreach (T v in il2CppList)
+        {
+            list.Add(v);
+        }
+        return list;
+    }
 }

@@ -12,15 +12,30 @@ internal static class ConversationInjector
 {
     private static readonly HashSet<string> _conversationsPatched = [];
 
+    private static bool CompareLink(Link link, Link other)
+    {
+        return link.destinationDialogueID == other.destinationDialogueID
+            && link.destinationConversationID == other.destinationConversationID;
+    }
+    private static bool CompareLink(Link link, DialogueEntry other)
+    {
+        return link.destinationDialogueID == other.id
+            && link.destinationConversationID == other.conversationID;
+    }
+
+    private static bool CompareEntry(DialogueEntry entry, DialogueEntry other)
+    {
+        return entry.id == other.id && entry.conversationID == other.conversationID;
+    }
+
     private static List<DialogueEntry> FindFinalNodes(
         DialogueEntry originEntry,
-        DialogueConversation conversation,
-        IEnumerable<int> parentNextIDs)
+        IEnumerable<Link> parentLinks)
     {
         Stack<DialogueEntry> stack = new();
         stack.Push(originEntry);
         List<DialogueEntry> finalNodes = [];
-        HashSet<int> vistedEntryIDs = [.. parentNextIDs];
+        List<Link> visited = [.. parentLinks];
 
         while (stack.Count > 0)
         {
@@ -32,14 +47,22 @@ internal static class ConversationInjector
             }
             foreach (Link link in entry.outgoingLinks)
             {
-                int nextID = link.destinationDialogueID;
-                if (vistedEntryIDs.Contains(nextID))
+                // Check if we've already visited a link with the same destination.
+                bool linkExists(Link other)
+                {
+                    return CompareLink(link, other);
+                }
+                if (visited.Exists(linkExists))
                 {
                     // Ignore circular references.
                     continue;
                 }
-                vistedEntryIDs.Add(nextID);
-                DialogueEntry nextEntry = conversation.GetDialogueEntry(nextID);
+                visited.Add(link);
+
+                // Get the destination entry.
+                DialogueConversation conversation =
+                    DialogueUtils.GetConversation(link.destinationConversationID);
+                DialogueEntry nextEntry = conversation?.GetDialogueEntry(link.destinationDialogueID);
                 if (nextEntry == null)
                 {
                     // Ignore null references.
@@ -59,7 +82,7 @@ internal static class ConversationInjector
         DialogueEntry parent = resolvedHook.ResolvedParent;
 
         Link link = new(
-            node.Conversation.id, parent.id,
+            parent.conversationID, parent.id,
             node.Conversation.id, node.Entry.id)
         {
             priority = hook.ConditionPriority,
@@ -94,24 +117,18 @@ internal static class ConversationInjector
 
         // Split: Break the chain at this point and insert this node in-between.
 
-        List<int> parentNextIDs = [];
-        foreach (Link parentLink in parent.outgoingLinks)
-        {
-            parentNextIDs.Add(parentLink.destinationDialogueID);
-        }
-
         List<DialogueEntry> finalNodes = FindFinalNodes(
             node.Entry,
-            node.Conversation,
-            parentNextIDs);
+            Il2CppUtils.ListFromIl2CppList(parent.outgoingLinks));
 
+        // Copy the parent's outgoing links to each final entry.
         foreach (DialogueEntry finalEntry in finalNodes)
         {
-            foreach (int nextID in parentNextIDs)
+            foreach (Link nextLink in parent.outgoingLinks)
             {
                 finalEntry.outgoingLinks.Add(new Link(
-                    node.Conversation.id, finalEntry.id,
-                    node.Conversation.id, nextID));
+                    finalEntry.conversationID, finalEntry.id,
+                    nextLink.destinationConversationID, nextLink.destinationDialogueID));
             }
         }
 
@@ -139,7 +156,7 @@ internal static class ConversationInjector
                 continue;
             }
 
-            Func<Link, bool> exists = (link) => link.destinationDialogueID == entry.id;
+            Func<Link, bool> exists = (link) => CompareLink(link, entry);
             bool linkExists = node.Entry.outgoingLinks.Exists(exists);
             if (linkExists)
             {
@@ -150,7 +167,7 @@ internal static class ConversationInjector
 
             Link nextLink = new(
                 node.Conversation.id, node.Entry.id,
-                node.Conversation.id, entry.id);
+                entry.conversationID, entry.id);
             node.Entry.outgoingLinks.Add(nextLink);
         }
     }
@@ -163,14 +180,14 @@ internal static class ConversationInjector
         List<ResolvedConversationNodeHook> resolvedHooks = [];
         foreach (InjectedConversationNode node in nodes)
         {
-            List<int> resolvedParentIDs = [];
+            List<DialogueEntry> resolvedParents = [];
 
             for (int i = 0; i < node.Node.Hooks.Count; i++)
             {
                 ConversationNodeHook hook = node.Node.Hooks[i];
                 ConversationNodeSelector selector = hook.Selector;
-                DialogueEntry entry = selector.Resolve(node.Conversation, nodes);
-                if (entry == null)
+                DialogueEntry parentEntry = selector.Resolve(node.Conversation, nodes);
+                if (parentEntry == null)
                 {
                     Melon<Core>.Logger.Warning("Failed to resolve hook " +
                         $"{i.ToString(CultureInfo.InvariantCulture)} for conversation node " +
@@ -179,25 +196,29 @@ internal static class ConversationInjector
                 }
 
                 // Check if this node hooks to the same parent multiple times.
-                if (resolvedParentIDs.Contains(entry.id))
+                bool parentExists(DialogueEntry entry)
+                {
+                    return CompareEntry(entry, parentEntry);
+                }
+                if (resolvedParents.Exists(parentExists))
                 {
                     Melon<Core>.Logger.Warning($"Conversation node '{node.Node.Name}' has " +
                         "duplicate hooks.");
                     continue;
                 }
-                resolvedParentIDs.Add(entry.id);
+                resolvedParents.Add(parentEntry);
 
                 // Check if the parent already has a link to this node.
-                Func<Link, bool> exists = (link) => link.destinationDialogueID == node.Entry.id;
-                bool linkExists = entry.outgoingLinks.Exists(exists);
-                if (linkExists)
+                Func<Link, bool> linkExists = (link) => CompareLink(link, node.Entry);
+                bool doesLinkExist = parentEntry.outgoingLinks.Exists(linkExists);
+                if (doesLinkExist)
                 {
                     Melon<Core>.Logger.Warning("Found duplicate incoming links " +
                         $"to conversation node '{node.Node.Name}'.");
                     continue;
                 }
 
-                ResolvedConversationNodeHook resolved = new(hook, node, entry);
+                ResolvedConversationNodeHook resolved = new(hook, node, parentEntry);
                 resolvedHooks.Add(resolved);
             }
         }

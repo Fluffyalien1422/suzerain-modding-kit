@@ -1,6 +1,6 @@
 using HarmonyLib;
 using Il2Cpp;
-using Il2CppPixelCrushers.DialogueSystem;
+using SuzerainModdingKit.Utils;
 using DialogueConversation = Il2CppPixelCrushers.DialogueSystem.Conversation;
 
 namespace SuzerainModdingKit.StoryFragments.Conversation;
@@ -13,8 +13,7 @@ internal static class ConversationPanel_Setup_Patch
     {
         string title = conversationData.ConversationProperties.Dialogue;
 
-        DialogueDatabase db = DialogueManager.MasterDatabase;
-        DialogueConversation conversation = db?.GetConversation(title);
+        DialogueConversation conversation = DialogueUtils.GetConversation(title);
         if (conversation == null)
         {
             return;

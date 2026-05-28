@@ -1,4 +1,5 @@
 using Il2CppPixelCrushers.DialogueSystem;
+using SuzerainModdingKit.Utils;
 using DialogueConversation = Il2CppPixelCrushers.DialogueSystem.Conversation;
 
 namespace SuzerainModdingKit.StoryFragments.Conversation.NodeSelectors;
@@ -15,6 +16,14 @@ public class ConversationNodeArticyIDSelector : ConversationNodeSelector
     {
         get;
     }
+    /// <summary>
+    /// Optional: The name of the conversation to search for the node in. If null, searches
+    /// the current conversation.
+    /// </summary>
+    public string ConversationName
+    {
+        get;
+    }
 
     /// <summary>
     /// Creates a new instance of this class.
@@ -22,26 +31,38 @@ public class ConversationNodeArticyIDSelector : ConversationNodeSelector
     /// <param name="articyID">
     /// The Articy ID of the node.
     /// </param>
+    /// <param name="conversationName">
+    /// Optional: The name of the conversation to search for the node in. If null, searches
+    /// the current conversation.
+    /// </param>
     /// <exception cref="ArgumentNullException">
     /// Thrown if any required arguments are null.
     /// </exception>
-    public ConversationNodeArticyIDSelector(string articyID)
+    public ConversationNodeArticyIDSelector(string articyID, string conversationName = null)
     {
         ArticyID = articyID ?? throw new ArgumentNullException(nameof(articyID));
+        ConversationName = conversationName;
     }
 
     public override DialogueEntry Resolve(
-        DialogueConversation conversation,
+        DialogueConversation currentConversation,
         IReadOnlyCollection<InjectedConversationNode> nodes)
     {
+        ArgumentNullException.ThrowIfNull(currentConversation);
+        ArgumentNullException.ThrowIfNull(nodes);
+
+        DialogueConversation conversation =
+            DialogueUtils.GetConversation(ConversationName) ?? currentConversation;
+
         foreach (DialogueEntry entry in conversation.dialogueEntries)
         {
             string entryArticyID = Field.LookupValue(entry.fields, "Articy Id");
-            if (entryArticyID.Equals(ArticyID, StringComparison.Ordinal))
+            if (string.Equals(entryArticyID, ArticyID, StringComparison.Ordinal))
             {
                 return entry;
             }
         }
+
         return null;
     }
 }
