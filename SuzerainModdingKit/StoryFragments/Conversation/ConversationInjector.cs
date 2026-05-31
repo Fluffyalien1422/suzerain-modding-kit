@@ -1,4 +1,3 @@
-using System.Collections.ObjectModel;
 using System.Globalization;
 using Il2CppPixelCrushers.DialogueSystem;
 using MelonLoader;
@@ -138,16 +137,12 @@ internal static class ConversationInjector
         parent.outgoingLinks.Add(link);
     }
 
-    // CreateNodeOutgoingLinks explicitly takes ReadOnlyCollection rather than an interface
-    // to ensure we never pass a mutable collection to selector.Resolve.
-    private static void CreateNodeOutgoingLinks(
-        InjectedConversationNode node,
-        ReadOnlyCollection<InjectedConversationNode> nodes)
+    private static void CreateNodeOutgoingLinks(InjectedConversationNode node)
     {
         for (int i = 0; i < node.Node.NextNodes.Count; i++)
         {
             ConversationNodeSelector selector = node.Node.NextNodes[i];
-            DialogueEntry entry = selector.Resolve(node.Conversation, nodes);
+            DialogueEntry entry = selector.Resolve(node.Conversation);
             if (entry == null)
             {
                 Melon<Core>.Logger.Warning("Failed to resolve next node " +
@@ -172,10 +167,8 @@ internal static class ConversationInjector
         }
     }
 
-    // ResolveHooks explicitly takes ReadOnlyCollection rather than an interface
-    // to ensure we never pass a mutable collection to selector.Resolve.
     private static List<ResolvedConversationNodeHook> ResolveHooks(
-        ReadOnlyCollection<InjectedConversationNode> nodes)
+        IEnumerable<InjectedConversationNode> nodes)
     {
         List<ResolvedConversationNodeHook> resolvedHooks = [];
         foreach (InjectedConversationNode node in nodes)
@@ -186,7 +179,7 @@ internal static class ConversationInjector
             {
                 ConversationNodeHook hook = node.Node.Hooks[i];
                 ConversationNodeSelector selector = hook.Selector;
-                DialogueEntry parentEntry = selector.Resolve(node.Conversation, nodes);
+                DialogueEntry parentEntry = selector.Resolve(node.Conversation);
                 if (parentEntry == null)
                 {
                     Melon<Core>.Logger.Warning("Failed to resolve hook " +
@@ -225,13 +218,13 @@ internal static class ConversationInjector
         return resolvedHooks;
     }
 
-    private static void LinkInjectedNodes(ReadOnlyCollection<InjectedConversationNode> nodes)
+    private static void LinkInjectedNodes(IEnumerable<InjectedConversationNode> nodes)
     {
         // Create the outgoing links first. All the outgoing links have to be created before
         // we can create hooks.
         foreach (InjectedConversationNode node in nodes)
         {
-            CreateNodeOutgoingLinks(node, nodes);
+            CreateNodeOutgoingLinks(node);
         }
 
         // Resolve and create hooks.
@@ -261,6 +254,7 @@ internal static class ConversationInjector
         DialogueEntry newEntry = template.CreateDialogueEntry(newID, conversation.id, node.Name);
         string articyID = ArticyIDGenerator.GenerateArticyID(node.Name);
         newEntry.SetTextField("Articy Id", articyID);
+        newEntry.SetTextField("SuzerainModdingKit.NodeName", node.Name);
         newEntry.currentLocalizedDialogueText = node.Text;
         newEntry.userScript = node.LuaScript;
         newEntry.conditionsString = node.LuaCondition;
@@ -320,8 +314,7 @@ internal static class ConversationInjector
             return;
         }
 
-        ReadOnlyCollection<InjectedConversationNode> injectedNodesReadOnly = new(injectedNodes);
-        LinkInjectedNodes(injectedNodesReadOnly);
+        LinkInjectedNodes(injectedNodes);
 
         Melon<Core>.Logger.Msg($"Patched conversation '{conversation.Title}'.");
     }

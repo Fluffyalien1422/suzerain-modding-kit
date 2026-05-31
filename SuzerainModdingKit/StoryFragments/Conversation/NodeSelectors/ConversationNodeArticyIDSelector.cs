@@ -44,12 +44,9 @@ public class ConversationNodeArticyIDSelector : ConversationNodeSelector
         ConversationName = conversationName;
     }
 
-    public override DialogueEntry Resolve(
-        DialogueConversation currentConversation,
-        IReadOnlyCollection<InjectedConversationNode> nodes)
+    public override DialogueEntry Resolve(DialogueConversation currentConversation)
     {
         ArgumentNullException.ThrowIfNull(currentConversation);
-        ArgumentNullException.ThrowIfNull(nodes);
 
         DialogueConversation conversation =
             DialogueUtils.GetConversation(ConversationName) ?? currentConversation;
